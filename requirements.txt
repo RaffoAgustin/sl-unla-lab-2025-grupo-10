@@ -2,4 +2,3 @@ fastapi
 sqlalchemy
 pandas
 borb
-uvicorn
