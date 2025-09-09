@@ -1,7 +1,18 @@
 from pydantic import BaseModel
 from datetime import date, time
 
-class Persona(BaseModel):
+class PersonaCreate(BaseModel):
+    nombre: str
+    email: str
+    dni: str
+    telefono: str
+    fecha_nacimiento: date
+    
+    class Config:
+        orm_mode = True
+        
+class PersonaResponse(BaseModel):
+    id: int
     nombre: str
     email: str
     dni: str
@@ -13,10 +24,19 @@ class Persona(BaseModel):
     class Config:
         orm_mode = True
 
-class Turno(BaseModel):
+class TurnoCreate(BaseModel):
     fecha = date
     hora = time
-    estado: str = "Pendiente"
+    persona_id: int
+    
+    class Config:
+        orm_mode = True
+
+class TurnoResponse(BaseModel):
+    id: int
+    fecha: date
+    hora: time
+    estado: str
     persona_id: int
     
     class Config:
