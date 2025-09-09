@@ -17,3 +17,5 @@ Funcionalidades:
 - Obtener un turno en particular: Thiago Nahuel Seoane
 - Actualizar los datos de un turno: Mateo David Ponce
 - Eliminar un turno: Thiago Nahuel Seoane
+- Obtener los turnos disponibles de una fecha específica: Mateo David Ponce
+
