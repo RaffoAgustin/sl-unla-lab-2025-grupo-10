@@ -8,7 +8,7 @@ class Persona(BaseModel):
     telefono: str
     fecha_nacimiento: date
     esta_habilitado: bool = True
-    edad: int | None = None
+    edad: int
     
     class Config:
         orm_mode = True
@@ -19,7 +19,5 @@ class Turno(BaseModel):
     estado: str = "Pendiente"
     persona_id: int
     
-    
-    # Relación con Persona
-    persona_id = Column(Integer, ForeignKey("personas.id"), nullable=False)
-    persona = relationship("Persona", backref="turnos")
+    class Config:
+        orm_mode = True
