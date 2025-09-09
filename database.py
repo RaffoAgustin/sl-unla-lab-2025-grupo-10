@@ -9,6 +9,7 @@ engine = create_engine( DATABASE_URL, connect_args={"check_same_thread": False})
 
 # Crear sesión
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+session = SessionLocal()
 
 # Base para los modelos
 Base = declarative_base()
