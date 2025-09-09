@@ -1,9 +1,7 @@
-from sqlalchemy import create_engine, Column, Integer, String, Boolean, Date, Time, ForeignKey
-from sqlalchemy.orm import declarative_base, sessionmaker, relationship
+from sqlalchemy import Column, Integer, String, Boolean, Date, Time, ForeignKey
+from sqlalchemy.orm import relationship
 from datetime import date
-
-engine = create_engine('sqlite:///mi_base.db', echo=True)
-Base = declarative_base()
+from database import Base
 
 class Persona(Base):
     __tablename__ = "personas"
@@ -32,11 +30,4 @@ class Turno(Base):
     
     # Relación con Persona
     persona_id = Column(Integer, ForeignKey("personas.id"), nullable=False)
-    persona = relationship("Persona", backref="turnos")
-    
-    
-Session = sessionmaker(bind=engine)
-session = Session()
-
-# Crear tablas si no existen
-Base.metadata.create_all(bind=engine)
+    persona = relationship("Persona", backref="turnos") 
