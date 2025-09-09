@@ -1,5 +1,11 @@
 # sl-unla-lab-2025-grupo-10
 
+Instalación:
+- Ejecutar python -m venv .venv para crear el venv
+- Ejecutar .venv/Scripts\activate para activar el venv
+- Ejecutar pip install -r requirements.txt para instalar las librerías del archivo de requerimientos
+- Ejecutar FastAPI para levantar la aplicación en localhost y el puerto por defecto (8000)
+
 Integrantes:
 - Thiago Nahuel Seoane
 - Mateo David Ponce
