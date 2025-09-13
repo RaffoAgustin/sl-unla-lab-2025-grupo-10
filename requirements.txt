@@ -1,4 +1,4 @@
-fastapi
-sqlalchemy
-pandas
-borb
+fastapi==0.116.1
+sqlalchemy==2.0.43
+pandas==2.3.2
+borb==3.0.2
