@@ -6,7 +6,7 @@ app = FastAPI()
 
 # Listado de las personas en la BD
 @app.get("/personas")
-def listado_personas(db=Depends(lambda: session)):
+def listado_personas(db: Session = Depends(get_db)):
     personas = db.query(Persona).all()
     if not personas:
         raise HTTPException(status_code=404, detail="No se encontraron personas")
