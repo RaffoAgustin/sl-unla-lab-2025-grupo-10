@@ -1,17 +1,18 @@
-from fastapi import FastAPI, HTTPException, status
+from fastapi import FastAPI, HTTPException, status, Depends
 from sqlalchemy.orm import Session
 from models import Persona
+from database import get_db
 from schemas import PersonaCreate, PersonaResponse
 
 app = FastAPI()
 
 #Modificar una Persona
 @app.put("/personas/{id}", response_model=PersonaResponse) #Usamos el esquema de PersonaResponse
-def modificar_persona(id: int, datos_persona: PersonaCreate, db: Session): #Usamos la plantilla PersonaCreate para los datos_persona
-   #Guarda en variable "persona" una query que busca a una persona con el mismo id.
-    persona = db.query(Persona).filter(Persona.id == id).first()
+def modificar_persona(id: int, datos_persona: PersonaCreate, db: Session=Depends(get_db)): #Usamos la plantilla PersonaCreate para los datos_persona
+   #Guarda en variable "persona" una persona con el mismo id del db.
+    persona = db.get(Persona, id)
 
-    #Si la query no devuelve nada, entonces lanza error 404
+    #Si no encuentra a la persona, entonces lanza error 404
     if not persona:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -33,6 +34,7 @@ def modificar_persona(id: int, datos_persona: PersonaCreate, db: Session): #Usam
     persona.dni = datos_persona.dni
     persona.telefono = datos_persona.telefono
     persona.fecha_nacimiento = datos_persona.fecha_nacimiento
+    persona.esta_habilitado = datos_persona.esta_habilitado
 
     #Intento guardar los cambios
     try:
