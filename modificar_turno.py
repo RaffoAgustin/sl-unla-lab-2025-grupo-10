@@ -1,0 +1,51 @@
+from fastapi import FastAPI, HTTPException, status, Depends
+from sqlalchemy.orm import Session
+from models import Turno, Persona
+from database import get_db
+from schemas import TurnoCreate, TurnoResponse
+
+app = FastAPI()
+
+#Modificar una Persona
+@app.put("/personas/{id}", response_model=TurnoResponse) #Usamos el esquema de TurnoResponse
+def modificar_turno(id: int, datos_turno: TurnoCreate, db: Session=Depends(get_db)): #Usamos la plantilla TurnoCreate para los datos_turno
+   #Guarda en variable "turno" un turno con el mismo id del db.
+    turno = db.get(Turno, id)
+
+    #Si no encuentra al turno, entonces lanza error 404
+    if not turno:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Turno no encontrado"
+        )
+    
+    #Guardo en variable "persona" a la persona asociada al turno
+    persona = db.get(Persona, datos_turno.persona_id)
+
+    #Reviso si la persona indicada existe
+    if not persona:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Persona asociada al turno no encontrada"
+        )
+
+    #Actualizo los datos del turno
+    turno.fecha = datos_turno.fecha
+    turno.hora = datos_turno.hora
+    turno.persona_id = datos_turno.persona_id
+    #No cambio el estado del turno porque el gestor de estado se encuentra en el punto D (Segundo hito)
+    
+
+    #Intento guardar los cambios
+    try:
+        db.commit()
+        db.refresh(turno)
+        return turno
+    
+    #Si ocurre un error inesperado, lanza error 500
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error inesperado al actualizar turno"
+        )
