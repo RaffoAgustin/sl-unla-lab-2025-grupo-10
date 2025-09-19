@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException, Depends
 from models import Persona
-from database import session
+from database import get_db
 from sqlalchemy.orm import Session
 from database import get_db
 
