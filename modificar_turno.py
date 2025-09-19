@@ -6,8 +6,8 @@ from schemas import TurnoCreate, TurnoResponse
 
 app = FastAPI()
 
-#Modificar una Persona
-@app.put("/personas/{id}", response_model=TurnoResponse) #Usamos el esquema de TurnoResponse
+#Modificar un turno
+@app.put("/turnos/{id}", response_model=TurnoResponse) #Usamos el esquema de TurnoResponse
 def modificar_turno(id: int, datos_turno: TurnoCreate, db: Session=Depends(get_db)): #Usamos la plantilla TurnoCreate para los datos_turno
    #Guarda en variable "turno" un turno con el mismo id del db.
     turno = db.get(Turno, id)
