@@ -9,7 +9,7 @@ app = FastAPI()
 @app.get("/turnos-disponibles")
 def turnos_disponibles(
     fecha: date = Query(..., description="Fecha en formato YYYY-MM-DD"), #Pide al usuario un elemento date (... significa obligatorio)
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db)  #Inyecta automáticamente una sesión de base de datos
 ):
     try:
         #Generar horarios base (De 9 a 17 en intervalos de media hora)
