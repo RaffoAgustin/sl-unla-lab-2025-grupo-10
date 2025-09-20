@@ -20,7 +20,7 @@ def turnos_disponibles(
                         "15:00", "15:30","16:00", "16:30"]
 
         #Hago una consulta de los turnos donde le fecha sea la misma a la pedida por el usuario
-        turnos_ocupados = (db.query(Turno).filter(Turno.fecha == fecha).all())
+        turnos_ocupados = (db.query(Turno).filter(Turno.fecha == fecha, Turno.estado != "cancelado").all())
 
         #Guardo las horas que ocupan esos turnos en un set, lo que evita repeticiones
         #Utilizo el método .strftime() para convertir t.hora en un string, ya que sino devolvería un objeto (datetime.time(14, 30))
