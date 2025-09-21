@@ -1,13 +1,13 @@
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends
 from models import Persona
 from database import get_db
 from sqlalchemy.orm import Session
 from database import get_db
 
-app = FastAPI()
+router = APIRouter()
 
 # Listado de las personas en la BD
-@app.get("/personas")
+@router.get("/personas")
 def listado_personas(db: Session = Depends(get_db)):
     personas = db.query(Persona).all()
     if not personas:

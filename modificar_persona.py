@@ -1,13 +1,13 @@
-from fastapi import FastAPI, HTTPException, status, Depends
+from fastapi import APIRouter, HTTPException, status, Depends
 from sqlalchemy.orm import Session
 from models import Persona
 from database import get_db
 from schemas import PersonaCreate, PersonaResponse
 
-app = FastAPI()
+router = APIRouter()
 
 #Modificar una Persona
-@app.put("/personas/{id}", response_model=PersonaResponse) #Usamos el esquema de PersonaResponse
+@router.put("/personas/{id}", response_model=PersonaResponse) #Usamos el esquema de PersonaResponse
 def modificar_persona(id: int, datos_persona: PersonaCreate, db: Session=Depends(get_db)): #Usamos la plantilla PersonaCreate para los datos_persona
    #Guarda en variable "persona" una persona con el mismo id del db.
     persona = db.get(Persona, id)
@@ -34,17 +34,21 @@ def modificar_persona(id: int, datos_persona: PersonaCreate, db: Session=Depends
     persona.dni = datos_persona.dni
     persona.telefono = datos_persona.telefono
     persona.fecha_nacimiento = datos_persona.fecha_nacimiento
-    persona.esta_habilitado = datos_persona.esta_habilitado
+    persona.esta_habilitado = True
 
     #Intento guardar los cambios
     try:
         db.commit()
         db.refresh(persona)
-        return persona
+        return {
+            "mensaje": f"Persona con ID {id} actualizada correctamente",
+            "persona": PersonaResponse.from_orm(persona)
+        }
     
     #Si ocurre un error inesperado, lanza error 500
     except Exception as e:
         db.rollback()
+        print("Error al actualizar persona:", e)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Error Inesperado al actualizar persona"

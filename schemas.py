@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from datetime import date, time
+from typing import Optional
 
 class PersonaCreate(BaseModel):
     nombre: str
@@ -25,9 +26,9 @@ class PersonaResponse(BaseModel):
         orm_mode = True
 
 class TurnoCreate(BaseModel):
-    fecha = date
-    hora = time
-    persona_id: int
+    fecha : date
+    hora : time
+    persona_id: Optional[int] = None
     
     class Config:
         orm_mode = True
