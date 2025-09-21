@@ -22,5 +22,5 @@ def eliminar_turno(id: int, db: Session = Depends(get_db)):
         db.rollback()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Error al eliminar el turno: {e}"
+            detail=f"Error al eliminar el turno"
         )
