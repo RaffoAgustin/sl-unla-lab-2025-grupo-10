@@ -9,6 +9,7 @@ from alta_turno import router as turnos_router
 from eliminar_turno import router as eliminar_turno_router
 from modificar_turno import router as modificar_turno
 from listado_turnos import router as listado_turnos
+from obtener_turno_particular import router as obtener_turno_particular
 
 app = FastAPI(title="Mi API")
 
@@ -24,6 +25,7 @@ app.include_router(turnos_router, tags=["Turnos"])
 app.include_router(eliminar_turno_router, prefix="/eliminar_turno", tags=["Eliminar Turno"])
 app.include_router(modificar_turno, prefix="/modificar_turno", tags=["Modificar Turno"])
 app.include_router(listado_turnos, prefix="/listado_turnos", tags=["Listado Turnos"])
+app.include_router(obtener_turno_particular, prefix="/obtener_turno_particular", tags=["Obtener Turno Particular"])
 
 @app.get("/")
 def read_root():
