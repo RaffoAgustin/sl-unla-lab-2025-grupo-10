@@ -26,8 +26,7 @@ def obtener_turno_particular(id: int, db: Session = Depends(get_db)):
                         "email": persona.email,
                         "dni": persona.dni,
                         "telefono": persona.telefono,
-                        "fecha_nacimiento": persona.fecha_nacimiento,
-                        "edad": persona.edad,
+                        "fecha_nacimiento": persona.fecha_nacimiento
                         } if turno.persona else None
         }
     except Exception as e:
