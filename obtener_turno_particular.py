@@ -1,5 +1,5 @@
 from fastapi import APIRouter, FastAPI, HTTPException, Depends
-from models import Turno
+from models import Turno, Persona
 from database import get_db
 from sqlalchemy.orm import Session
 
@@ -12,20 +12,22 @@ def obtener_turno_particular(id: int, db: Session = Depends(get_db)):
         turno = db.get(Turno, id)
         if turno is None:
             raise HTTPException(status_code=404, detail=f"Turno con ID {id} no encontrado")
-
+        
+        persona = db.query(Persona).filter(Persona.id == id).first()
+        
         return {
             "id": turno.id,
             "fecha": turno.fecha,
             "hora": turno.hora,
             "estado": turno.estado,
             "persona": {
-                        "id": turno.persona.id,
-                        "nombre": turno.persona.nombre,
-                        "email": turno.persona.email,
-                        "dni": turno.persona.dni,
-                        "telefono": turno.persona.telefono,
-                        "fecha_nacimiento": turno.persona.fecha_nacimiento,
-                        "edad": turno.persona.edad,
+                        "id": persona.id,
+                        "nombre": persona.nombre,
+                        "email": persona.email,
+                        "dni": persona.dni,
+                        "telefono": persona.telefono,
+                        "fecha_nacimiento": persona.fecha_nacimiento,
+                        "edad": persona.edad,
                         } if turno.persona else None
         }
     except Exception as e:
