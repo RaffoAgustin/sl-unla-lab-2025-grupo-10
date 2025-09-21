@@ -1,7 +1,8 @@
 from fastapi import FastAPI
 from database import Base, engine
 from alta_persona import router as personas_router
-from listado_personas import router as listado_router
+from listado_personas import router as listado_persona_router
+from obtener_persona import router as persona_router
 from eliminar_persona import router as eliminar_router
 from modificar_persona import router as modificar_router
 from alta_turno import router as turnos_router
@@ -14,7 +15,8 @@ app = FastAPI(title="Mi API")
 Base.metadata.create_all(bind=engine)
 
 app.include_router(personas_router, prefix="/personas", tags=["Personas"])
-app.include_router(listado_router, prefix="/listado_personas", tags=["Listado Personas"])
+app.include_router(listado_persona_router, prefix="/listado_personas", tags=["Listado completo de Personas"])
+app.include_router(persona_router, prefix="/obtener_persona", tags=["Listado de una Persona especifica"])
 app.include_router(eliminar_router, prefix="/eliminar_persona", tags=["Eliminar Persona"])
 app.include_router(modificar_router, prefix="/modificar_persona", tags=["Modificar Persona"])
 

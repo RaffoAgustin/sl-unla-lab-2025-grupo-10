@@ -1,13 +1,13 @@
 #Codigo para mostrar una sola persona de la base de datos
 
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends
 from models import Persona
 from database import get_db
 from sqlalchemy.orm import Session
 
-app = FastAPI()
+router = APIRouter()
 
-@app.get("/personas/{id}")
+@router.get("/personas/{id}")
 def obtener_persona(id: int, db: Session = Depends(get_db)):
     persona = db.get(Persona, id)
     if persona is None:
