@@ -1,10 +1,10 @@
 from sqlalchemy import Column, Integer, String, Boolean, Date, Time, ForeignKey
 from sqlalchemy.orm import relationship
-from datetime import date
 from database import Base
 
 class Persona(Base):
     __tablename__ = "personas"
+
     id = Column(Integer, primary_key=True, index=True)
     nombre = Column(String, nullable=False)
     email = Column(String, nullable=False)
@@ -12,15 +12,8 @@ class Persona(Base):
     telefono = Column(String, nullable=False)
     fecha_nacimiento = Column(Date, nullable=False)
     esta_habilitado = Column(Boolean, default=True, nullable=False)
-    
-    @property
-    def edad(self):
-        """Calcula la edad automáticamente según fecha de nacimiento."""
-        today = date.today()
-        return today.year - self.fecha_nacimiento.year - (
-            (today.month, today.day) < (self.fecha_nacimiento.month, self.fecha_nacimiento.day)
-        )
-        
+
+
 class Turno(Base):
     __tablename__ = "turnos"
     id = Column(Integer, primary_key=True, index=True)
@@ -29,5 +22,5 @@ class Turno(Base):
     estado = Column(String, default="Pendiente", nullable=False)
     
     # Relación con Persona
-    persona_id = Column(Integer, ForeignKey("personas.id"), nullable=False)
+    persona_id = Column(Integer, ForeignKey("personas.id"), nullable=True)
     persona = relationship("Persona", backref="turnos") 

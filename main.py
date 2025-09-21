@@ -1,7 +1,25 @@
 from fastapi import FastAPI
+from database import Base, engine
+from alta_persona import router as personas_router
+from listado_personas import router as listado_router
+from eliminar_persona import router as eliminar_router
+from modificar_persona import router as modificar_router
+from alta_turno import router as turnos_router
+from eliminar_turno import router as eliminar_turno_router
+from modificar_turno import router as modificar_turno
 
-app = FastAPI()
+app = FastAPI(title="Mi API")
 
-@app.get("/")
+Base.metadata.create_all(bind=engine)
+
+app.include_router(personas_router, prefix="/personas", tags=["Personas"])
+app.include_router(listado_router, prefix="/listado_personas", tags=["Listado Personas"])
+app.include_router(eliminar_router, prefix="/eliminar_persona", tags=["Eliminar Persona"])
+app.include_router(modificar_router, prefix="/modificar_persona", tags=["Modificar Persona"])
+
+app.include_router(turnos_router, tags=["Turnos"])
+app.include_router(eliminar_turno_router, prefix="/eliminar_turno", tags=["Eliminar Turno"])
+app.include_router(modificar_turno, prefix="/modificar_turno", tags=["Modificar Turno"])
+
 def read_root():
     return {"mensaje": "¡Proyecto base funcionando!"}

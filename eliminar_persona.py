@@ -1,12 +1,12 @@
-from fastapi import FastAPI, HTTPException, status, Depends
+from fastapi import APIRouter, HTTPException, status, Depends
 from models import Persona
 from sqlalchemy.orm import Session
 from database import get_db
 
-app = FastAPI()
+router = APIRouter()
 
 # Eliminar una persona
-@app.delete("/personas/{id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/personas/{id}", status_code=status.HTTP_200_OK)
 def eliminar_persona(id: int, db: Session = Depends(get_db)):
     try:
         persona = db.get(Persona, id)
@@ -14,6 +14,7 @@ def eliminar_persona(id: int, db: Session = Depends(get_db)):
             raise HTTPException(status_code=404, detail="Persona no encontrada")
         db.delete(persona)
         db.commit()
+        return {"mensaje": f"La persona con ID {id} se eliminó correctamente"}
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=500, detail="Error al eliminar la persona")
