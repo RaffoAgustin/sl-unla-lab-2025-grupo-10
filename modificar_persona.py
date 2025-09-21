@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from models import Persona
 from database import get_db
 from datetime import date
-from schemas import PersonaCreate
+from schemas import PersonaUpdate
 
 router = APIRouter()
 
@@ -11,7 +11,7 @@ router = APIRouter()
 @router.put("/personas/{id}")
 def modificar_persona(
     id: int, 
-    datos_persona: PersonaCreate,  #Usamos la plantilla PersonaCreate para los datos_persona
+    datos_persona: PersonaUpdate,  #Usamos la plantilla PersonaUpdate para los datos_persona
     db: Session=Depends(get_db) #Inyecta automáticamente una sesión de base de datos
     ):
 
@@ -40,6 +40,7 @@ def modificar_persona(
     persona.dni = datos_persona.dni
     persona.telefono = datos_persona.telefono
     persona.fecha_nacimiento = datos_persona.fecha_nacimiento
+    persona.esta_habilitado = datos_persona.esta_habilitado
     persona.edad = date.today().year - datos_persona.fecha_nacimiento.year - (
         (date.today().month, date.today().day) < (datos_persona.fecha_nacimiento.month, datos_persona.fecha_nacimiento.day)
     )
