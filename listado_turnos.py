@@ -24,7 +24,6 @@ def listado_turnos(db: Session = Depends(get_db)):
             "Persona": {
                 "ID Persona": persona.id,
                 "Nombre": persona.nombre,
-                "Apellido": persona.apellido,
                 "Email": persona.email
             } if persona else None
         }
