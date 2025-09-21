@@ -7,6 +7,7 @@ from modificar_persona import router as modificar_router
 from alta_turno import router as turnos_router
 from eliminar_turno import router as eliminar_turno_router
 from modificar_turno import router as modificar_turno
+from listado_turnos import router as listado_turnos
 
 app = FastAPI(title="Mi API")
 
@@ -20,6 +21,7 @@ app.include_router(modificar_router, prefix="/modificar_persona", tags=["Modific
 app.include_router(turnos_router, tags=["Turnos"])
 app.include_router(eliminar_turno_router, prefix="/eliminar_turno", tags=["Eliminar Turno"])
 app.include_router(modificar_turno, prefix="/modificar_turno", tags=["Modificar Turno"])
+app.include_router(listado_turnos, prefix="/listado_turnos", tags=["Listado Turnos"])
 
 def read_root():
     return {"mensaje": "¡Proyecto base funcionando!"}
