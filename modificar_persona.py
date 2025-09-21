@@ -2,13 +2,19 @@ from fastapi import APIRouter, HTTPException, status, Depends
 from sqlalchemy.orm import Session
 from models import Persona
 from database import get_db
-from schemas import PersonaCreate, PersonaResponse
+from datetime import date
+from schemas import PersonaCreate
 
 router = APIRouter()
 
 #Modificar una Persona
-@router.put("/personas/{id}", response_model=PersonaResponse) #Usamos el esquema de PersonaResponse
-def modificar_persona(id: int, datos_persona: PersonaCreate, db: Session=Depends(get_db)): #Usamos la plantilla PersonaCreate para los datos_persona
+@router.put("/personas/{id}")
+def modificar_persona(
+    id: int, 
+    datos_persona: PersonaCreate,  #Usamos la plantilla PersonaCreate para los datos_persona
+    db: Session=Depends(get_db) #Inyecta automáticamente una sesión de base de datos
+    ):
+
    #Guarda en variable "persona" una persona con el mismo id del db.
     persona = db.get(Persona, id)
 
@@ -34,7 +40,10 @@ def modificar_persona(id: int, datos_persona: PersonaCreate, db: Session=Depends
     persona.dni = datos_persona.dni
     persona.telefono = datos_persona.telefono
     persona.fecha_nacimiento = datos_persona.fecha_nacimiento
-    persona.esta_habilitado = True
+    persona.edad = date.today().year - datos_persona.fecha_nacimiento.year - (
+        (date.today().month, date.today().day) < (datos_persona.fecha_nacimiento.month, datos_persona.fecha_nacimiento.day)
+    )
+
 
     #Intento guardar los cambios
     try:
@@ -42,7 +51,7 @@ def modificar_persona(id: int, datos_persona: PersonaCreate, db: Session=Depends
         db.refresh(persona)
         return {
             "mensaje": f"Persona con ID {id} actualizada correctamente",
-            "persona": PersonaResponse.from_orm(persona)
+            "persona": persona
         }
     
     #Si ocurre un error inesperado, lanza error 500
