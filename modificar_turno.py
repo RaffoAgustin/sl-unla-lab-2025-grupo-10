@@ -7,7 +7,7 @@ from schemas import TurnoCreate, TurnoResponse
 router = APIRouter()
 
 #Modificar un turno
-@router.put("/turnos/{id}", response_model=TurnoResponse) #Usamos el esquema de TurnoResponse
+@router.put("/turnos/{id}")
 def modificar_turno(id: int, datos_turno: TurnoCreate, db: Session=Depends(get_db)): #Usamos la plantilla TurnoCreate para los datos_turno
    #Guarda en variable "turno" un turno con el mismo id del db.
     turno = db.get(Turno, id)
@@ -40,7 +40,10 @@ def modificar_turno(id: int, datos_turno: TurnoCreate, db: Session=Depends(get_d
     try:
         db.commit()
         db.refresh(turno)
-        return turno
+        return {
+            "mensaje": f"Turno con ID {id} actualizado correctamente",
+            "persona": turno
+        }
     
     #Si ocurre un error inesperado, lanza error 500
     except Exception as e:

@@ -11,6 +11,9 @@ class PersonaCreate(BaseModel):
     
     class Config:
         orm_mode = True
+
+class PersonaUpdate(PersonaCreate):
+    esta_habilitado: bool
         
 class PersonaResponse(BaseModel):
     id: int
