@@ -2,6 +2,7 @@ from fastapi import APIRouter, FastAPI, HTTPException, Depends
 from models import Turno, Persona
 from database import get_db
 from sqlalchemy.orm import Session
+from datetime import date
 
 router = APIRouter()
 
@@ -15,6 +16,9 @@ def obtener_turno_particular(id: int, db: Session = Depends(get_db)):
         
         persona = db.query(Persona).filter(Persona.id == id).first()
         
+        edad = date.today().year - persona.fecha_nacimiento.year - (
+        (date.today().month, date.today().day) < (persona.fecha_nacimiento.month, persona.fecha_nacimiento.day))
+        
         return {
             "id": turno.id,
             "fecha": turno.fecha,
@@ -26,7 +30,9 @@ def obtener_turno_particular(id: int, db: Session = Depends(get_db)):
                         "email": persona.email,
                         "dni": persona.dni,
                         "telefono": persona.telefono,
-                        "fecha_nacimiento": persona.fecha_nacimiento
+                        "fecha_nacimiento": persona.fecha_nacimiento,
+                        "esta_habilitado": persona.esta_habilitado,
+                        "edad": edad
                         } if turno.persona else None
         }
     except Exception as e:
