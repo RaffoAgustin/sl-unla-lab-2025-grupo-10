@@ -23,5 +23,6 @@ app.include_router(eliminar_turno_router, prefix="/eliminar_turno", tags=["Elimi
 app.include_router(modificar_turno, prefix="/modificar_turno", tags=["Modificar Turno"])
 app.include_router(listado_turnos, prefix="/listado_turnos", tags=["Listado Turnos"])
 
+@app.get("/")
 def read_root():
     return {"mensaje": "¡Proyecto base funcionando!"}
