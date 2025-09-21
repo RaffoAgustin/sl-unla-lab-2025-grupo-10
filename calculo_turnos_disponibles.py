@@ -1,12 +1,12 @@
-from fastapi import FastAPI, Depends, HTTPException, Query, status
+from fastapi import APIRouter, FastAPI, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 from datetime import date
 from models import Turno
 from database import get_db
 
-app = FastAPI()
+router = APIRouter()
 
-@app.get("/turnos-disponibles")
+@router.get("/turnos-disponibles")
 def turnos_disponibles(
     fecha: date = Query(..., description="Fecha en formato YYYY-MM-DD"), #Pide al usuario un elemento date (... significa obligatorio)
     db: Session = Depends(get_db)  #Inyecta automáticamente una sesión de base de datos
