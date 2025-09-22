@@ -52,7 +52,16 @@ def modificar_persona(
         db.refresh(persona)
         return {
             "mensaje": f"Persona con ID {id} actualizada correctamente",
-            "persona": persona
+            "persona":{
+                    "id": persona.id,
+                    "nombre": persona.nombre,
+                    "email": persona.email,
+                    "dni": persona.dni,
+                    "telefono": persona.telefono,
+                    "fecha_nacimiento": persona.fecha_nacimiento,
+                    "edad": persona.edad,
+                    "esta_habilitado": persona.esta_habilitado
+            }
         }
     
     #Si ocurre un error inesperado, lanza error 500
