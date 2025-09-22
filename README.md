@@ -27,3 +27,6 @@ Funcionalidades:
 
 Video explicativo:
 https://drive.google.com/file/d/16btJhgHiw4hVxxl8ZMFuoZuFyUfV1s-m/view
+
+Postman Collection:
+https://galactic-shadow-682463.postman.co/workspace/435e29c0-555d-4b7e-8290-b2619a4faaf5
