@@ -14,7 +14,7 @@ def obtener_turno_particular(id: int, db: Session = Depends(get_db)):
         if turno is None:
             raise HTTPException(status_code=404, detail=f"Turno con ID {id} no encontrado")
         
-        persona = db.query(Persona).filter(Persona.id == id).first()
+        persona = db.query(Persona).filter(Persona.id == turno.persona_id).first()
         
         edad = date.today().year - persona.fecha_nacimiento.year - (
         (date.today().month, date.today().day) < (persona.fecha_nacimiento.month, persona.fecha_nacimiento.day))
