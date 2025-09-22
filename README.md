@@ -25,3 +25,5 @@ Funcionalidades:
 - Eliminar un turno: Thiago Nahuel Seoane
 - Obtener los turnos disponibles de una fecha específica: Mateo David Ponce
 
+Video explicativo:
+https://drive.google.com/file/d/16btJhgHiw4hVxxl8ZMFuoZuFyUfV1s-m/view
