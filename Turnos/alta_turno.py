@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from database import get_db
-from models import Turno, Persona
+from DataBase.database import get_db
+from DataBase.models import Turno, Persona
 from schemas import TurnoCreate
 from datetime import datetime, date, time, timedelta
 

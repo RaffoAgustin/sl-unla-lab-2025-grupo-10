@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, status, Depends
 from sqlalchemy.orm import Session
-from models import Turno, Persona
-from database import get_db
+from DataBase.models import Turno, Persona
+from DataBase.database import get_db
 from schemas import TurnoCreate
 
 router = APIRouter()
