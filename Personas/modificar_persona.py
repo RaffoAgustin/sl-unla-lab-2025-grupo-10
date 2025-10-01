@@ -1,9 +1,9 @@
 from fastapi import APIRouter, HTTPException, status, Depends
 from sqlalchemy.orm import Session
-from models import Persona
-from database import get_db
-from datetime import date
+from DataBase.models import Persona
+from DataBase.database import get_db
 from schemas import PersonaUpdate
+from datetime import date
 
 router = APIRouter()
 

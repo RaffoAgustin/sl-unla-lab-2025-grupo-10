@@ -1,16 +1,18 @@
+# main.py
+#Importaciones de FastAPI y los routers de los distintos archivos
 from fastapi import FastAPI
-from database import Base, engine
-from alta_persona import router as personas_router
-from listado_personas import router as listado_persona_router
-from obtener_persona import router as persona_router
-from eliminar_persona import router as eliminar_router
-from modificar_persona import router as modificar_router
-from alta_turno import router as turnos_router
-from eliminar_turno import router as eliminar_turno_router
-from modificar_turno import router as modificar_turno
-from listado_turnos import router as listado_turnos
-from obtener_turno_particular import router as obtener_turno_particular
-from calculo_turnos_disponibles import router as calculo_turnos_disponibles
+from DataBase.database import Base, engine
+from Personas.alta_persona import router as personas_router
+from Personas.listado_personas import router as listado_persona_router
+from Personas.obtener_persona import router as persona_router
+from Personas.eliminar_persona import router as eliminar_router
+from Personas.modificar_persona import router as modificar_router
+from Turnos.alta_turno import router as turnos_router
+from Turnos.eliminar_turno import router as eliminar_turno_router
+from Turnos.modificar_turno import router as modificar_turno
+from Turnos.listado_turnos import router as listado_turnos
+from Turnos.obtener_turno_particular import router as obtener_turno_particular
+from Turnos.calculo_turnos_disponibles import router as calculo_turnos_disponibles
 
 app = FastAPI(title="Mi API")
 

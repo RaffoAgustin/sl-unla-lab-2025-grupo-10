@@ -1,7 +1,8 @@
 from fastapi import APIRouter, FastAPI, HTTPException, Depends
-from models import Turno, Persona
-from database import get_db
 from sqlalchemy.orm import Session
+from DataBase.models import Turno, Persona
+from DataBase.database import get_db
+
 from datetime import date
 
 router = APIRouter()
