@@ -8,7 +8,7 @@ from datetime import date
 router = APIRouter()
 
 # Obtener los turnos de una fecha
-@router.get("reportes/turnos-por-fecha")
+@router.get("/reportes/turnos-por-fecha")
 def obtener_turnos_de_una_fecha(
     fecha: date = Query(..., description="Fecha en formato YYYY-MM-DD"), #Pide al usuario un elemento date (... significa obligatorio)
     db: Session = Depends(get_db)  #Inyecta automáticamente una sesión de base de datos
