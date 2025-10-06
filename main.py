@@ -13,6 +13,7 @@ from Turnos.modificar_turno import router as modificar_turno
 from Turnos.listado_turnos import router as listado_turnos
 from Turnos.obtener_turno_particular import router as obtener_turno_particular
 from Turnos.calculo_turnos_disponibles import router as calculo_turnos_disponibles
+from Turnos.turnos_de_una_fecha import router as turnos_de_una_fecha
 
 app = FastAPI(title="Mi API")
 
@@ -30,6 +31,7 @@ app.include_router(modificar_turno, prefix="/modificar_turno", tags=["Modificar 
 app.include_router(listado_turnos, prefix="/listado_turnos", tags=["Listado Turnos"])
 app.include_router(obtener_turno_particular, prefix="/obtener_turno_particular", tags=["Obtener Turno Particular"])
 app.include_router(calculo_turnos_disponibles,prefix="/calculo_turnos_disponibles", tags=["Calcular Turnos Disponibles"])
+app.include_router(turnos_de_una_fecha,prefix="/turnos_de_una_fecha", tags=["Obtener Turnos De Una Fecha"])
 
 @app.get("/")
 def read_root():
