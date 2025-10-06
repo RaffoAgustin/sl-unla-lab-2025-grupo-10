@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String, Boolean, Date, Time, ForeignKey
 from sqlalchemy.orm import relationship
-from database import Base
+from DataBase.database import Base
+
 
 class Persona(Base):
     __tablename__ = "personas"
@@ -20,7 +21,7 @@ class Turno(Base):
     fecha = Column(Date, nullable=False)
     hora = Column(Time, nullable=False)
     estado = Column(String, default="Pendiente", nullable=False)
-    
+
     # Relación con Persona
     persona_id = Column(Integer, ForeignKey("personas.id"), nullable=True)
-    persona = relationship("Persona", backref="turnos") 
+    persona = relationship("Persona", backref="turnos")

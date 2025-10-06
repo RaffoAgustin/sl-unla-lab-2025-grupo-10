@@ -1,8 +1,8 @@
 from fastapi import APIRouter, HTTPException, status, Depends
 from sqlalchemy.orm import Session
-from models import Turno, Persona
-from database import get_db
-from schemas import TurnoCreate, TurnoResponse
+from DataBase.models import Turno, Persona
+from DataBase.database import get_db
+from schemas import TurnoCreate
 
 router = APIRouter()
 
@@ -42,7 +42,18 @@ def modificar_turno(id: int, datos_turno: TurnoCreate, db: Session=Depends(get_d
         db.refresh(turno)
         return {
             "mensaje": f"Turno con ID {id} actualizado correctamente",
-            "persona": turno
+            "turno":{
+                "id": turno.id,
+                "fecha": turno.fecha,
+                "hora": turno.hora,
+                "estado": turno.estado,
+                "persona":{
+                    "id": persona.id,
+                    "nombre": persona.nombre,
+                    "email": persona.email,
+                    "dni": persona.dni,
+                }
+            }
         }
     
     #Si ocurre un error inesperado, lanza error 500

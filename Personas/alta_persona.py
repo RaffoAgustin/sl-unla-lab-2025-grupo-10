@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from database import get_db
-from models import Persona
+from DataBase.database import get_db
+from DataBase.models import Persona
 from schemas import PersonaCreate, PersonaResponse
 from datetime import date
 
