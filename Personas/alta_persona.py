@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from DataBase.database import get_db
 from DataBase.models import Persona
 from schemas import PersonaCreate, PersonaResponse
-
+from utils import calcular_edad
 router = APIRouter()
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
@@ -15,6 +15,8 @@ def crear_persona(persona: PersonaCreate, db: Session = Depends(get_db)):
         telefono=persona.telefono,
         fecha_nacimiento=persona.fecha_nacimiento
     )
+    
+    edad = calcular_edad(persona.fecha_nacimiento)
     
     
     try:
