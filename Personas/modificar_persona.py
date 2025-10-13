@@ -4,6 +4,7 @@ from DataBase.models import Persona
 from DataBase.database import get_db
 from schemas import PersonaUpdate
 from datetime import date
+from utils import calcular_edad
 
 router = APIRouter()
 
@@ -41,9 +42,7 @@ def modificar_persona(
     persona.telefono = datos_persona.telefono
     persona.fecha_nacimiento = datos_persona.fecha_nacimiento
     persona.esta_habilitado = datos_persona.esta_habilitado
-    persona.edad = date.today().year - datos_persona.fecha_nacimiento.year - (
-        (date.today().month, date.today().day) < (datos_persona.fecha_nacimiento.month, datos_persona.fecha_nacimiento.day)
-    )
+    edad = calcular_edad(persona.fecha_nacimiento)
 
 
     #Intento guardar los cambios
@@ -59,7 +58,7 @@ def modificar_persona(
                     "dni": persona.dni,
                     "telefono": persona.telefono,
                     "fecha_nacimiento": persona.fecha_nacimiento,
-                    "edad": persona.edad,
+                    "edad": edad,
                     "esta_habilitado": persona.esta_habilitado
             }
         }
