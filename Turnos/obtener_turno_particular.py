@@ -1,9 +1,7 @@
-from fastapi import APIRouter, FastAPI, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
 from DataBase.models import Turno, Persona
 from DataBase.database import get_db
-
-from datetime import date
 
 router = APIRouter()
 
@@ -15,26 +13,24 @@ def obtener_turno_particular(id: int, db: Session = Depends(get_db)):
         if turno is None:
             raise HTTPException(status_code=404, detail=f"Turno con ID {id} no encontrado")
         
-        persona = db.query(Persona).filter(Persona.id == turno.persona_id).first()
-        
-        edad = date.today().year - persona.fecha_nacimiento.year - (
-        (date.today().month, date.today().day) < (persona.fecha_nacimiento.month, persona.fecha_nacimiento.day))
-        
+        persona = db.get(Persona, turno.persona_id)
+
         return {
-            "id": turno.id,
-            "fecha": turno.fecha,
-            "hora": turno.hora,
-            "estado": turno.estado,
-            "persona": {
-                        "id": persona.id,
-                        "nombre": persona.nombre,
-                        "email": persona.email,
-                        "dni": persona.dni,
-                        "telefono": persona.telefono,
-                        "fecha_nacimiento": persona.fecha_nacimiento,
-                        "esta_habilitado": persona.esta_habilitado,
-                        "edad": edad
-                        } if turno.persona else None
-        }
+                "id": turno.id,
+                "fecha": turno.fecha,
+                "hora": turno.hora,
+                "estado": turno.estado,
+                "persona": {
+                    "id": persona.id,
+                    "nombre": persona.nombre,
+                    "email": persona.email,
+                    "dni": persona.dni,
+                    "telefono": persona.telefono,
+                    "fecha_nacimiento": persona.fecha_nacimiento,
+                    "esta_habilitado": persona.esta_habilitado,
+                    "edad": persona.edad
+                } if persona else None
+            }
+        
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error al obtener el turno con ID {id}")
+        raise HTTPException(status_code=500, detail=f"Error al obtener el turno con ID {id}: {str(e)}")
