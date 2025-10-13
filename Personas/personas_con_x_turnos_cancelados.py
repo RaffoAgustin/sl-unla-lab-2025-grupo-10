@@ -11,12 +11,13 @@ def personas_con_turnos_cancelados(
     min: int = Query(..., description="Minimo de turnos cancelados"), #Pide al usuario el mínimo de Turnos cancelados (... significa obligatorio)
     db: Session = Depends(get_db)  #Inyecta automáticamente una sesión de base de datos
 ):
-    try:
-        if min < 0:
+    if min < 0:
             raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="El valor minimo no puede ser negativo"
-        )
+     )
+    
+    try:
         personas=(
             db.query(Persona) #Hace una consulta de personas
                .join(Turno) #Junto a sus turnos
