@@ -1,5 +1,5 @@
 from pydantic import BaseModel, field_validator, EmailStr
-from datetime import date, time
+from datetime import date, time, datetime
 from typing import Optional
 import re
 from variables import HORARIOS_VALIDOS
@@ -9,7 +9,7 @@ class PersonaCreate(BaseModel):
     email: EmailStr
     dni: str
     telefono: str
-    fecha_nacimiento: date
+    fecha_nacimiento: str
 
     class Config:
         from_attributes = True
@@ -34,11 +34,20 @@ class PersonaCreate(BaseModel):
             raise ValueError("El teléfono debe contener exactamente 10 números")
         return v
 
-    @field_validator("fecha_nacimiento")
-    def validar_fecha_nacimiento(cls, v: date):
-        if v > date.today():
-            raise ValueError("La fecha de nacimiento no puede ser futura")
-        return v
+    @field_validator("fecha_nacimiento", mode="after")
+    def validar_fecha(cls, v):
+        # Validar que solo contenga números, '-' o '/'
+        if not re.fullmatch(r"[0-9/-]+", v):
+            raise ValueError("La fecha solo puede contener números, '-' o '/'")
+        
+        # Intentar parsear los distintos formatos
+        for fmt in ("%Y-%m-%d", "%d/%m/%Y", "%d-%m-%Y"):
+            try:
+                return datetime.strptime(v, fmt).date()
+            except ValueError:
+                continue
+        
+        raise ValueError("Formato de fecha no válido. Usa YYYY-MM-DD, DD/MM/YYYY o DD-MM-YYYY")
 
 
 class PersonaUpdate(PersonaCreate):
