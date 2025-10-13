@@ -17,7 +17,6 @@ def calcular_edad(fecha):
         raise ValueError("Formato no válido.")
     return relativedelta(date.today(), fecha).years
 
-
 def validar_cancelaciones(db: Session, persona_id: int, meses: int = 6):
     # Import local para romper la circularidad
     from DataBase.models import Turno
