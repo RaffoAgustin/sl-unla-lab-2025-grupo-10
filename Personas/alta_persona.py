@@ -17,8 +17,7 @@ def crear_persona(persona: PersonaCreate, db: Session = Depends(get_db)):
     )
     
     edad = calcular_edad(persona.fecha_nacimiento)
-    
-    
+        
     try:
         db.add(nueva_persona)
         db.commit()
