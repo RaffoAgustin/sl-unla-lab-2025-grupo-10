@@ -3,7 +3,8 @@ from sqlalchemy.orm import Session
 from DataBase.database import get_db
 from DataBase.models import Turno, Persona
 from schemas import TurnoCreate
-from datetime import datetime, date, time, timedelta
+from datetime import datetime, date, timedelta
+from variables import HORARIOS_VALIDOS
 
 router = APIRouter()
 
@@ -20,13 +21,7 @@ def crear_turno(datos_turno: TurnoCreate, db: Session = Depends(get_db)):
                 detail="Formato de hora inválido, debe ser HH:MM"
             )
 
-    horarios_validos = [
-        time(9,0), time(9,30), time(10,0), time(10,30), time(11,0), time(11,30),
-        time(12,0), time(12,30), time(13,0), time(13,30), time(14,0), time(14,30),
-        time(15,0), time(15,30), time(16,0), time(16,30), time(17,0)
-    ]
-
-    if datos_turno.hora not in horarios_validos:
+    if datos_turno.hora not in HORARIOS_VALIDOS:
         raise HTTPException(
             status_code=400,
             detail="El turno debe estar entre las 09:00 y 17:00 en intervalos de 30 minutos"
