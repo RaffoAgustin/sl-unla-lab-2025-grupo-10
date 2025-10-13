@@ -3,7 +3,6 @@ from sqlalchemy.orm import Session
 from DataBase.database import get_db
 from DataBase.models import Persona
 from schemas import PersonaCreate, PersonaResponse
-from datetime import date
 
 router = APIRouter()
 
@@ -16,24 +15,40 @@ def crear_persona(persona: PersonaCreate, db: Session = Depends(get_db)):
         telefono=persona.telefono,
         fecha_nacimiento=persona.fecha_nacimiento
     )
+    
+    edad = nueva_persona.edad
+    
     try:
         db.add(nueva_persona)
         db.commit()
         db.refresh(nueva_persona)
+        
     except Exception as e:
         db.rollback()
+        
+        # Detectar DNI duplicado
         if "UNIQUE constraint failed: personas.dni" in str(e.orig):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=f"Ya existe una persona con DNI {persona.dni}"
             )
+        
+        # Detectar teléfono duplicado
+        elif "UNIQUE constraint failed: personas.telefono" in str(e.orig):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Ya existe una persona con teléfono {persona.telefono}"
+            )
+        
+        # Detectar email duplicado
+        elif "UNIQUE constraint failed: personas.email" in str(e.orig):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Ya existe una persona con email {persona.email}"
+            )
+        
         else:
             raise HTTPException(status_code=500, detail=str(e))
-
-    # Calculo de Edad
-    edad = date.today().year - nueva_persona.fecha_nacimiento.year - (
-        (date.today().month, date.today().day) < (nueva_persona.fecha_nacimiento.month, nueva_persona.fecha_nacimiento.day)
-    )
 
     return {
         "mensaje": "Persona creada correctamente",
