@@ -127,6 +127,32 @@ class TurnoCreate(BaseModel):
         
         return v
 
+class FechaQuery(BaseModel):
+    fecha: date
+    
+    @validator("fecha", pre=True)
+    def validar_fecha_turno(cls, v):
+        if isinstance(v, str):
+            # Validar que solo contenga números, - o /
+            if not re.fullmatch(r"[0-9/-]+", v):
+                raise ValueError("La fecha solo puede contener números, '-' o '/'")
+            
+            # Intentar parsear distintos formatos
+            for fmt in ("%Y-%m-%d", "%d/%m/%Y", "%d-%m-%Y"):
+                try:
+                    v = datetime.strptime(v, fmt).date()
+                    break
+                except ValueError:
+                    continue
+            else:
+                raise ValueError("Formato de fecha no válido. Usa YYYY-MM-DD o DD/MM/YYYY.")
+        
+        # Validar que no sea pasada
+        if v < date.today():
+            raise ValueError("La fecha del turno no puede ser pasada")
+        
+        return v
+    
 class TurnoResponse(BaseModel):
     id: int
     fecha: date
