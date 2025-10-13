@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
 from DataBase.models import Turno, Persona
 from DataBase.database import get_db
+from utils import calcular_edad
 
 router = APIRouter()
 
@@ -28,7 +29,7 @@ def obtener_turno_particular(id: int, db: Session = Depends(get_db)):
                     "telefono": persona.telefono,
                     "fecha_nacimiento": persona.fecha_nacimiento,
                     "esta_habilitado": persona.esta_habilitado,
-                    "edad": persona.edad
+                    "edad": calcular_edad(persona.fecha_nacimiento)
                 } if persona else None
             }
         
