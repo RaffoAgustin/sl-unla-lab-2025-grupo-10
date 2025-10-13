@@ -5,8 +5,10 @@ from datetime import datetime, date, timedelta
 from variables import MAX_CANCELADOS
 
 def calcular_edad(fecha):
+    if isinstance(fecha, date):
+        return relativedelta(date.today(), fecha).years
     for f in ("%Y-%m-%d", "%d/%m/%Y", "%d-%m-%Y"):
-        try: 
+        try:
             fecha = datetime.strptime(fecha, f).date()
             break
         except:
@@ -14,6 +16,7 @@ def calcular_edad(fecha):
     else:
         raise ValueError("Formato no válido.")
     return relativedelta(date.today(), fecha).years
+
 
 def validar_cancelaciones(db: Session, persona_id: int, meses: int = 6):
     # Import local para romper la circularidad
