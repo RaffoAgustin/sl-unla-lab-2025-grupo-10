@@ -1,6 +1,5 @@
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
-from DataBase.models import Turno
 from dateutil.relativedelta import relativedelta
 from datetime import datetime, date, timedelta
 from variables import MAX_CANCELADOS
@@ -17,6 +16,9 @@ def calcular_edad(fecha):
     return relativedelta(date.today(), fecha).years
 
 def validar_cancelaciones(db: Session, persona_id: int, meses: int = 6):
+    # Import local para romper la circularidad
+    from DataBase.models import Turno
+
     if db.query(Turno).filter(
         Turno.persona_id == persona_id,
         Turno.estado == "cancelado",
