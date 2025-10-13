@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from DataBase.database import get_db
 from DataBase.models import Turno, Persona
 from schemas import TurnoCreate
-from datetime import datetime, date, timedelta
+from utils import validar_cancelaciones
 from variables import HORARIOS_VALIDOS
 
 router = APIRouter()
@@ -11,15 +11,6 @@ router = APIRouter()
 # Crear un nuevo Turno
 @router.post("/turno", status_code=status.HTTP_201_CREATED)
 def crear_turno(datos_turno: TurnoCreate, db: Session = Depends(get_db)):
-
-    if isinstance(datos_turno.hora, str):
-        try:
-            datos_turno.hora = datetime.strptime(datos_turno.hora, "%H:%M").time()
-        except ValueError:
-            raise HTTPException(
-                status_code=400,
-                detail="Formato de hora inválido, debe ser HH:MM"
-            )
 
     if datos_turno.hora not in HORARIOS_VALIDOS:
         raise HTTPException(
@@ -42,20 +33,7 @@ def crear_turno(datos_turno: TurnoCreate, db: Session = Depends(get_db)):
     if not persona:
         raise HTTPException(status_code=400, detail="La persona indicada no existe")
     
-
-    hace_6_meses = date.today() - timedelta(days=180)
-
-    cancelados = db.query(Turno).filter(
-        Turno.persona_id == datos_turno.persona_id,
-        Turno.estado == "cancelado", 
-        Turno.fecha >= hace_6_meses
-    ).count()
-
-    if cancelados >= 5:
-        raise HTTPException(
-            status_code=400,
-            detail="No se puede asignar el turno: la persona tiene 5 o más turnos cancelados en los últimos 6 meses"
-        )
+    validar_cancelaciones(db, datos_turno.persona_id)
 
     turno_nuevo = Turno(
         fecha=datos_turno.fecha,
