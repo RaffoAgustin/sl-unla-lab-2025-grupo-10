@@ -12,6 +12,3 @@ def calcular_edad(fecha):
     else:
         raise ValueError("Formato no válido.")
     return relativedelta(date.today(), fecha).years
-
-def es_horario_valido(hora):
-    return hora in HORARIOS_VALIDOS
