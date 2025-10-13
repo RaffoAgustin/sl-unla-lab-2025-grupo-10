@@ -16,7 +16,6 @@ def crear_persona(persona: PersonaCreate, db: Session = Depends(get_db)):
         fecha_nacimiento=persona.fecha_nacimiento
     )
     
-    edad = nueva_persona.edad
     
     try:
         db.add(nueva_persona)
