@@ -7,6 +7,7 @@ router = APIRouter()
 
 @router.patch("/turnos/{id}", status_code=status.HTTP_200_OK)
 def eliminar_turno_logicamente(id: int, db: Session = Depends(get_db)):
+    try:
         turno = db.get(Turno, id)
         if turno is None:
             raise HTTPException(
@@ -23,4 +24,9 @@ def eliminar_turno_logicamente(id: int, db: Session = Depends(get_db)):
             raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Error al eliminar el turno"
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error interno del servidor: {str(e)}"
         )

@@ -51,7 +51,7 @@ class PersonaCreate(BaseModel):
 
 
 class PersonaUpdate(PersonaCreate):
-    esta_habilitado: bool
+    pass #Se ignora para que no se modifique la variable esta_habiitado
 
 
 class PersonaResponse(BaseModel):
