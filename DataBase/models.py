@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, Boolean, Date, Time, ForeignKey
 from sqlalchemy.orm import relationship
 from DataBase.database import Base
-from utils import calcular_edad
+from Utils.utils import calcular_edad
 
 class Persona(Base):
     __tablename__ = "personas"

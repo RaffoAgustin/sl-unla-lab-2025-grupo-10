@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from schemas import FechaQuery
 from DataBase.models import Turno
 from DataBase.database import get_db
-from variables import HORARIOS_VALIDOS
+from Utils.config import HORARIOS_VALIDOS
 
 router = APIRouter()
 
@@ -32,5 +32,5 @@ def turnos_disponibles(query: FechaQuery = Depends(), db: Session = Depends(get_
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Error Inesperado"
+            detail=f"Error interno del servidor: {str(e)}"
         )

@@ -2,7 +2,7 @@ from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from dateutil.relativedelta import relativedelta
 from datetime import datetime, date, timedelta
-from variables import MAX_CANCELADOS
+from Utils.config import MAX_CANCELADOS
 
 def calcular_edad(fecha):
     if isinstance(fecha, date):

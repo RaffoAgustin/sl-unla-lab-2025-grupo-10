@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
 from DataBase.models import Turno, Persona
 from DataBase.database import get_db
-from utils import calcular_edad
+from Utils.utils import calcular_edad
 
 router = APIRouter()
 
