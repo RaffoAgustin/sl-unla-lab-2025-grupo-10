@@ -16,15 +16,14 @@ def turnos_confirmados_periodo(
 ):
     ## Ejemplo de Endpoint: 
     ## /reportes/turnos-confirmados?desde=2024-02-17&hasta=2025-12-24&pag=3
-
-
-    if hasta and (hasta < desde): #Si "hasta" fue indicado, verifica que sea mayor a "desde"
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="La fecha 'hasta' no puede ser anterior a la fecha 'desde'"
-        )
-
     try:
+        
+        if hasta and (hasta < desde): #Si "hasta" fue indicado, verifica que sea mayor a "desde"
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="La fecha 'hasta' no puede ser anterior a la fecha 'desde'"
+            )
+
         #Consulta inicial
         turnosConfirmados = (
             db.query(Turno)
@@ -46,7 +45,6 @@ def turnos_confirmados_periodo(
             .limit(cantElementosXPagina) #Limito la cantidad de registros por su variable
             .all() #Muestra todos los registros bajo estos parámetros
         )
-
 
         return {
             "pagina": pag,
