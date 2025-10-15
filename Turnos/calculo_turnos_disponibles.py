@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from schemas import FechaQuery
 from DataBase.models import Turno
 from DataBase.database import get_db
-from variables import HORARIOS_VALIDOS
+from Utils.config import HORARIOS_VALIDOS
 
 router = APIRouter()
 

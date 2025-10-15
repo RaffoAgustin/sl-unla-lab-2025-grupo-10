@@ -4,7 +4,7 @@ from DataBase.database import get_db
 from DataBase.models import Turno, Persona
 from schemas import TurnoCreate
 from Utils.utils import validar_cancelaciones
-from variables import HORARIOS_VALIDOS
+from Utils.config import HORARIOS_VALIDOS
 
 router = APIRouter()
 

@@ -2,7 +2,7 @@ from pydantic import BaseModel, field_validator, EmailStr
 from datetime import date, time, datetime
 from typing import Optional
 import re
-from variables import HORARIOS_VALIDOS
+from Utils.config import HORARIOS_VALIDOS
 
 class PersonaCreate(BaseModel):
     nombre: str
