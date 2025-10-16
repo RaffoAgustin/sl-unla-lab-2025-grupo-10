@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 from datetime import date
 from typing import Optional
-from variables import ESTADO_TURNO
+from Utils.config import ESTADO_TURNO
 from DataBase.models import Turno
 from DataBase.database import get_db
 
