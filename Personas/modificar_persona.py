@@ -3,7 +3,6 @@ from sqlalchemy.orm import Session
 from DataBase.models import Persona
 from DataBase.database import get_db
 from schemas import PersonaUpdate
-from datetime import date
 from Utils.utils import calcular_edad
 
 router = APIRouter()
