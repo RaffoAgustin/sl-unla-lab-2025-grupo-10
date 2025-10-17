@@ -23,6 +23,7 @@ from Turnos.turnos_confirmados_periodo import router as turnos_confirmados_perio
 
 from Debug.cambiar_estado_turno import router as cambiar_estado_turno
 from Debug.crear_muchas_personas import router as crear_muchas_personas
+from Debug.crear_muchos_turnos import router as crear_muchos_turnos
 
 app = FastAPI(title="Mi API")
 
@@ -49,6 +50,7 @@ app.include_router(turnos_confirmados_periodo,prefix="/turnos_confirmados_period
 
 app.include_router(cambiar_estado_turno, prefix="/debug", tags=["Debug - Cambiar Estado Turno"])
 app.include_router(crear_muchas_personas, prefix="/debug", tags=["Debug - Crear muchas personas"])
+app.include_router(crear_muchos_turnos, prefix="/debug", tags=["Debug - Crear muchos turnos"])
 
 @app.get("/")
 def read_root():
