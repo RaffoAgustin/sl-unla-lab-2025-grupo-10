@@ -17,7 +17,7 @@ def crear_personas_debug(
     """
     Crea múltiples personas falsas para propósitos de depuración.
     Ejemplo de uso:
-    POST /debug/crear-personas?cantidad=10
+    POST /debug/crear-muchas-personas?cantidad=10
     """
     personas_creadas = []
 
