@@ -5,7 +5,6 @@ from DataBase.database import get_db
 from Utils.config import ESTADOS_TURNO
 from enum import Enum
 from pydantic import BaseModel
-from typing import Optional
 
 # Crear enum dinámicamente
 EstadoTurno = Enum('EstadoTurno', {estado: estado for estado in ESTADOS_TURNO})
