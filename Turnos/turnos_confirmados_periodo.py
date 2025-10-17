@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 from datetime import date
 from typing import Optional
-from Utils.config import ESTADO_TURNO
+from Utils.config import ESTADOS_TURNO
 from DataBase.models import Turno
 from DataBase.database import get_db
 
@@ -29,7 +29,7 @@ def turnos_confirmados_periodo(
         turnosConfirmados = (
             db.query(Turno)
             .filter(
-                Turno.estado == ESTADO_TURNO[2], #Aquellos turnos confirmados
+                Turno.estado == ESTADOS_TURNO[2], #Aquellos turnos confirmados
                 Turno.fecha >= desde) #Donde su fecha sea mas reciente que "desde"
                 )
         
