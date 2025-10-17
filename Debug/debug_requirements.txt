@@ -1,0 +1,1 @@
+faker==37.11.0 #Crea datos falsos aleatorios (Necesario para el crear_muchas_personas)
