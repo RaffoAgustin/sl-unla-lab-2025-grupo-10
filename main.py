@@ -21,10 +21,6 @@ from Turnos.turnos_de_una_persona import router as turnos_de_una_persona
 from Turnos.eliminar_turno_logicamente import router as eliminar_turno_logicamente
 from Turnos.turnos_confirmados_periodo import router as turnos_confirmados_periodo
 
-from Debug.cambiar_estado_turno import router as cambiar_estado_turno
-from Debug.crear_muchas_personas import router as crear_muchas_personas
-from Debug.crear_muchos_turnos import router as crear_muchos_turnos
-
 app = FastAPI(title="Mi API")
 
 Base.metadata.create_all(bind=engine)
@@ -47,10 +43,6 @@ app.include_router(turnos_de_una_fecha,prefix="/turnos_de_una_fecha", tags=["Obt
 app.include_router(turnos_de_una_persona,prefix="/turnos_de_una_persona", tags=["Obtener Turnos De Una Persona"])
 app.include_router(eliminar_turno_logicamente,prefix="/eliminar_turno_logicamente", tags=["Eliminar Turno Lógicamente"])
 app.include_router(turnos_confirmados_periodo,prefix="/turnos_confirmados_periodo", tags=["Turnos confirmados en un periodo"])
-
-app.include_router(cambiar_estado_turno, prefix="/debug", tags=["Debug - Cambiar Estado Turno"])
-app.include_router(crear_muchas_personas, prefix="/debug", tags=["Debug - Crear muchas personas"])
-app.include_router(crear_muchos_turnos, prefix="/debug", tags=["Debug - Crear muchos turnos"])
 
 @app.get("/")
 def read_root():
