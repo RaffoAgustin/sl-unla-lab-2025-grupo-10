@@ -12,6 +12,11 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 estados_strings = os.getenv("ESTADOS_TURNO")
 ESTADOS_TURNO = estados_strings.split(',') if estados_strings else [] #Se crea la lista, si no hay, por seguridad se crea vacia
 
+MESES = [
+    "", "enero", "febrero", "marzo", "abril", "mayo", "junio",
+    "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"
+]
+
 # Inicializar lista de horarios válidos
 HORARIOS_VALIDOS = []
 

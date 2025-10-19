@@ -8,6 +8,8 @@ from Personas.obtener_persona import router as persona_router
 from Personas.eliminar_persona import router as eliminar_router
 from Personas.modificar_persona import router as modificar_router
 from Personas.personas_con_x_turnos_cancelados import router as personas_con_x_turnos_cancelados
+from Personas.estado_Personas_Habilitadas import router as estado_personas_habilitadas
+
 
 from Turnos.alta_turno import router as turnos_router
 from Turnos.eliminar_turno import router as eliminar_turno_router
@@ -20,6 +22,7 @@ from Turnos.turnos_de_una_persona import router as turnos_de_una_persona
 from Turnos.turnos_confirmados_periodo import router as turnos_confirmados_periodo
 from Turnos.confirmar_turno import router as confirmar_turno
 from Turnos.cancelar_turno import router as cancelar_turno
+from Turnos.turnos_Cancelados_Mes_Actual import router as turnosCanceladosPorMes
 
 app = FastAPI(title="Mi API")
 
@@ -36,6 +39,7 @@ app.include_router(
     modificar_router, prefix="/modificar_persona", tags=["Modificar Persona"])
 app.include_router(personas_con_x_turnos_cancelados, prefix="/personas_con_x_turnos_cancelados",
                    tags=["Personas con un minimo de turnos cancelados"])
+app.include_router(estado_personas_habilitadas, prefix="/reportes", tags=["Estado Personas Habilitadas o No"])
 
 app.include_router(turnos_router, tags=["Turnos"])
 app.include_router(eliminar_turno_router,
@@ -53,9 +57,10 @@ app.include_router(turnos_de_una_fecha, prefix="/turnos_de_una_fecha",
 app.include_router(turnos_de_una_persona, prefix="/turnos_de_una_persona",
                    tags=["Obtener Turnos De Una Persona"])
 app.include_router(turnos_confirmados_periodo, prefix="/turnos_confirmados_periodo",
-                   tags=["Turnos confirmados en un periodo"])
-app.include_router(confirmar_turno, tags=["Confirmar Turno"])
-app.include_router(cancelar_turno, tags=["Cancelar Turno"])
+                   tags=["Turnos confirmados en un periodo"]),
+app.include_router(confirmar_turno, tags=["Confirmar Turno"]),
+app.include_router(cancelar_turno, tags=["Cancelar Turno"]),
+app.include_router(turnosCanceladosPorMes,prefix="/reportes", tags=["Turnos Cancelados Por Mes"])
 
 
 @app.get("/")
