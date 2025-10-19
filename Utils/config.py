@@ -10,12 +10,8 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 
 # Leer la variable ESTADOS_TURNO
 estados_strings = os.getenv("ESTADOS_TURNO")
-ESTADOS_TURNO = estados_strings.split(',') if estados_strings else [] #Se crea la lista, si no hay, por seguridad se crea vacia
-
-MESES = [
-    "", "enero", "febrero", "marzo", "abril", "mayo", "junio",
-    "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"
-]
+# Se crea la lista, si no hay, por seguridad se crea vacia
+ESTADOS_TURNO = estados_strings.split(',') if estados_strings else []
 
 # Inicializar lista de horarios válidos
 HORARIOS_VALIDOS = []
@@ -31,7 +27,14 @@ if horarios_str:
             horario_obj = time.fromisoformat(horario_str.strip())
             HORARIOS_VALIDOS.append(horario_obj)
         except ValueError:
-            print(f"ERROR: El formato de hora '{horario_str}' en .env es inválido y será ignorado.")
+            print(
+                f"ERROR: El formato de hora '{horario_str}' en .env es inválido y será ignorado.")
+
+
+# Leer la variable MESES
+meses_str = os.getenv("MESES")
+# Se crea la lista, si no hay, por seguridad se crea vacia
+MESES = meses_str.split(',') if meses_str else []
 
 # Leer la variable MAX_CANCELADOS
 max_cancelados_str = os.getenv("MAX_CANCELADOS")

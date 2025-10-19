@@ -4,10 +4,9 @@ from sqlalchemy.orm import Session
 from sqlalchemy import extract, func
 from DataBase.database import get_db
 from DataBase.models import Turno
-from Utils.config import MESES
+from Utils.config import ESTADOS_TURNO, MESES
 
 router = APIRouter()
-
 
 
 @router.get("/turnos-cancelados-por-mes")
@@ -18,7 +17,7 @@ def turnos_cancelados_mes_actual(db: Session = Depends(get_db)):
         Turno.fecha,
         func.count(Turno.id).label("cantidad")
     ).filter(
-        Turno.estado == "Cancelado",
+        Turno.estado == ESTADOS_TURNO[1],
         extract('year', Turno.fecha) == hoy.year,
         extract('month', Turno.fecha) == hoy.month
     ).group_by(Turno.fecha).all()
@@ -28,7 +27,7 @@ def turnos_cancelados_mes_actual(db: Session = Depends(get_db)):
 
     for fecha, cantidad in grupos:
         turnos_fecha = db.query(Turno).filter(
-            Turno.estado == "Cancelado",
+            Turno.estado == ESTADOS_TURNO[1],
             Turno.fecha == fecha
         ).all()
 
