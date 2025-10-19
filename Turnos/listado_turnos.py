@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
 from DataBase.models import Persona, Turno
 from DataBase.database import get_db
+from Utils.utils import actualizar_turnos_vencidos
 
 router = APIRouter()
 
@@ -11,7 +12,11 @@ router = APIRouter()
 @router.get("/turnos")
 def listado_turnos(db: Session = Depends(get_db)):
     try:
-        resultados = db.query(Turno, Persona).join(
+        # Actualizar automáticamente turnos vencidos antes de mostrar la lista
+        turnos_confirmados_actualizados = actualizar_turnos_vencidos(db)
+
+        # Usar LEFT JOIN para incluir turnos sin persona asignada (cancelados)
+        resultados = db.query(Turno, Persona).outerjoin(
             Persona).order_by(Turno.fecha, Turno.hora).all()
 
         if not resultados:
@@ -20,18 +25,26 @@ def listado_turnos(db: Session = Depends(get_db)):
 
         lista_turnos = []
         for turno, persona in resultados:
-            lista_turnos.append({
+            turno_datos = {
                 "id": turno.id,
                 "fecha": turno.fecha,
                 "hora": turno.hora,
                 "estado": turno.estado,
-                "persona": {
+            }
+
+            # Solo agregar datos de persona si existe (no es null)
+            if persona:
+                turno_datos["persona"] = {
                     "id": persona.id,
                     "nombre": persona.nombre,
                     "dni": persona.dni,
                     "telefono": persona.telefono
                 }
-            })
+            else:
+                # Turno sin persona asignada (cancelado o disponible)
+                turno_datos["persona"] = None
+
+            lista_turnos.append(turno_datos)
 
         return lista_turnos
 

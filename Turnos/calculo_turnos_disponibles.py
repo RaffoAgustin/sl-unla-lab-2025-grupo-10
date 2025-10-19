@@ -3,19 +3,25 @@ from sqlalchemy.orm import Session
 from schemas import FechaQuery
 from DataBase.models import Turno
 from DataBase.database import get_db
-from Utils.config import HORARIOS_VALIDOS
+from Utils.config import HORARIOS_VALIDOS, ESTADOS_TURNO
 
 router = APIRouter()
+
 
 @router.get("/turnos-disponibles")
 def turnos_disponibles(query: FechaQuery = Depends(), db: Session = Depends(get_db)):
     try:
 
-        #Hago una consulta de los turnos donde le fecha sea la misma a la pedida por el usuario
-        turnos_ocupados = (db.query(Turno).filter(Turno.fecha == query.fecha, Turno.estado != "cancelado").all())
+        # Hago una consulta de los turnos donde la fecha sea la misma a la pedida por el usuario
+        # Excluyo turnos cancelados o sin persona asignada (disponibles)
+        turnos_ocupados = (db.query(Turno).filter(
+            Turno.fecha == query.fecha,
+            Turno.estado != ESTADOS_TURNO[1],  # No "Cancelado"
+            Turno.persona_id.is_not(None)  # Solo turnos con persona asignada
+        ).all())
 
-        #Guardo las horas que ocupan esos turnos en un set, lo que evita repeticiones
-        #Utilizo el método .strftime() para convertir t.hora en un string, ya que sino devolvería un objeto (datetime.time(14, 30))
+        # Guardo las horas que ocupan esos turnos en un set, lo que evita repeticiones
+        # Utilizo el método .strftime() para convertir t.hora en un string, ya que sino devolvería un objeto (datetime.time(14, 30))
         horas_ocupadas = {t.hora.strftime("%H:%M") for t in turnos_ocupados}
 
         horarios_disponibles = [
@@ -23,10 +29,12 @@ def turnos_disponibles(query: FechaQuery = Depends(), db: Session = Depends(get_
             for h in HORARIOS_VALIDOS
             if h.strftime("%H:%M") not in horas_ocupadas
         ]
-      
+
         return {
-            "fecha": query.fecha.strftime("%Y-%m-%d"), #Convierte nuevamente el objeto "fecha" a string
-            "horarios_disponibles": horarios_disponibles #Devuelve la lista de horarios disponibles
+            # Convierte nuevamente el objeto "fecha" a string
+            "fecha": query.fecha.strftime("%Y-%m-%d"),
+            # Devuelve la lista de horarios disponibles
+            "horarios_disponibles": horarios_disponibles
         }
 
     except Exception as e:
