@@ -7,7 +7,6 @@ from Personas.listado_personas import router as listado_persona_router
 from Personas.obtener_persona import router as persona_router
 from Personas.eliminar_persona import router as eliminar_router
 from Personas.modificar_persona import router as modificar_router
-from Personas.eliminar_persona_logicamente import router as eliminar_persona_logicamente
 from Personas.personas_con_x_turnos_cancelados import router as personas_con_x_turnos_cancelados
 
 from Turnos.alta_turno import router as turnos_router
@@ -18,7 +17,6 @@ from Turnos.obtener_turno_particular import router as obtener_turno_particular
 from Turnos.calculo_turnos_disponibles import router as calculo_turnos_disponibles
 from Turnos.turnos_de_una_fecha import router as turnos_de_una_fecha
 from Turnos.turnos_de_una_persona import router as turnos_de_una_persona
-from Turnos.eliminar_turno_logicamente import router as eliminar_turno_logicamente
 from Turnos.turnos_confirmados_periodo import router as turnos_confirmados_periodo
 from Turnos.confirmar_turno import router as confirmar_turno
 from Turnos.cancelar_turno import router as cancelar_turno
@@ -36,8 +34,6 @@ app.include_router(eliminar_router, prefix="/eliminar_persona",
                    tags=["Eliminar Persona"])
 app.include_router(
     modificar_router, prefix="/modificar_persona", tags=["Modificar Persona"])
-app.include_router(eliminar_persona_logicamente,
-                   prefix="/eliminar_persona_logicamente", tags=["Eliminar Persona Lógicamente"])
 app.include_router(personas_con_x_turnos_cancelados, prefix="/personas_con_x_turnos_cancelados",
                    tags=["Personas con un minimo de turnos cancelados"])
 
@@ -56,8 +52,6 @@ app.include_router(turnos_de_una_fecha, prefix="/turnos_de_una_fecha",
                    tags=["Obtener Turnos De Una Fecha"])
 app.include_router(turnos_de_una_persona, prefix="/turnos_de_una_persona",
                    tags=["Obtener Turnos De Una Persona"])
-app.include_router(eliminar_turno_logicamente,
-                   prefix="/eliminar_turno_logicamente", tags=["Eliminar Turno Lógicamente"])
 app.include_router(turnos_confirmados_periodo, prefix="/turnos_confirmados_periodo",
                    tags=["Turnos confirmados en un periodo"])
 app.include_router(confirmar_turno, tags=["Confirmar Turno"])

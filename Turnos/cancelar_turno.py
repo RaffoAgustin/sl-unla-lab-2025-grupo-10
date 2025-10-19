@@ -37,7 +37,7 @@ def cancelar_turno(id: int, db: Session = Depends(get_db)):
                 "fecha": turno.fecha,
                 "hora": turno.hora,
                 "estado": turno.estado,
-                "persona_id": turno.persona_id
+                "persona_id": turno.persona_id  # Ahora es null
             }
         }
 
