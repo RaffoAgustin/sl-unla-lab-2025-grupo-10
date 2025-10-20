@@ -2,13 +2,13 @@ from fastapi import APIRouter, HTTPException, status, Depends
 from sqlalchemy.orm import Session
 from DataBase.models import Turno, Persona
 from DataBase.database import get_db
-from schemas import TurnoCreate
+from schemas import TurnoUpdate
 
 router = APIRouter()
 
 #Modificar un turno
 @router.put("/turnos/{id}")
-def modificar_turno(id: int, datos_turno: TurnoCreate, db: Session=Depends(get_db)): #Usamos la plantilla TurnoCreate para los datos_turno
+def modificar_turno(id: int, datos_turno: TurnoUpdate, db: Session=Depends(get_db)): #Usamos la plantilla TurnoCreate para los datos_turno
    #Guarda en variable "turno" un turno con el mismo id del db.
     try:
         turno = db.get(Turno, id)
