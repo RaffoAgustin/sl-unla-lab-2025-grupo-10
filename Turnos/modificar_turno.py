@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from DataBase.models import Turno, Persona
 from DataBase.database import get_db
 from schemas import TurnoUpdate
+from Utils.config import ESTADOS_TURNO
 
 router = APIRouter()
 
@@ -19,23 +20,22 @@ def modificar_turno(id: int, datos_turno: TurnoUpdate, db: Session=Depends(get_d
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Turno no encontrado"
             )
-        
-        #Guardo en variable "persona" a la persona asociada al turno
-        persona = db.get(Persona, datos_turno.persona_id)
 
-        #Reviso si la persona indicada existe
-        if not persona:
+        existe = db.query(Turno).filter(
+            Turno.fecha == datos_turno.fecha,
+            Turno.hora == datos_turno.hora,
+            Turno.estado != ESTADOS_TURNO[1] #Excluye a los turnos cancelados
+        ).first()
+
+        if existe:
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Persona asociada al turno no encontrada"
+                status_code=400,
+                detail="Este turno ya está ocupado"
             )
-
+        
         #Actualizo los datos del turno
         turno.fecha = datos_turno.fecha
         turno.hora = datos_turno.hora
-        turno.persona_id = datos_turno.persona_id
-        #No cambio el estado del turno porque el gestor de estado se encuentra en el punto D (Segundo hito)
-        
 
         #Intento guardar los cambios
         try:
@@ -47,13 +47,7 @@ def modificar_turno(id: int, datos_turno: TurnoUpdate, db: Session=Depends(get_d
                     "id": turno.id,
                     "fecha": turno.fecha,
                     "hora": turno.hora,
-                    "estado": turno.estado,
-                    "persona":{
-                        "id": persona.id,
-                        "nombre": persona.nombre,
-                        "email": persona.email,
-                        "dni": persona.dni,
-                    }
+                    "estado": turno.estado
                 }
             }
         
