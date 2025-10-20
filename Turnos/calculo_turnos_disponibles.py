@@ -4,18 +4,22 @@ from schemas import FechaQuery
 from DataBase.models import Turno
 from DataBase.database import get_db
 from Utils.config import HORARIOS_VALIDOS, ESTADOS_TURNO
+from Utils.utils import validar_y_formatear_fecha
 
 router = APIRouter()
 
 
 @router.get("/turnos-disponibles")
-def turnos_disponibles(query: FechaQuery = Depends(), db: Session = Depends(get_db)):
-    try:
+def turnos_disponibles(fecha: str, db: Session = Depends(get_db)):
+   
+   fecha_formateada = validar_y_formatear_fecha(fecha)
+   
+   try:
 
         # Hago una consulta de los turnos donde la fecha sea la misma a la pedida por el usuario
         # Excluyo turnos cancelados o sin persona asignada (disponibles)
         turnos_ocupados = (db.query(Turno).filter(
-            Turno.fecha == query.fecha,
+            Turno.fecha == fecha_formateada,
             Turno.estado != ESTADOS_TURNO[1],  # No "Cancelado"
             Turno.persona_id.is_not(None)  # Solo turnos con persona asignada
         ).all())
@@ -32,13 +36,13 @@ def turnos_disponibles(query: FechaQuery = Depends(), db: Session = Depends(get_
 
         return {
             # Convierte nuevamente el objeto "fecha" a string
-            "fecha": query.fecha.strftime("%Y-%m-%d"),
+            "fecha": fecha_formateada.strftime("%Y-%m-%d"),
             # Devuelve la lista de horarios disponibles
             "horarios_disponibles": horarios_disponibles
         }
-
-    except Exception as e:
-        raise HTTPException(
+        
+   except Exception as e:
+       raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error interno del servidor: {str(e)}"
         )
