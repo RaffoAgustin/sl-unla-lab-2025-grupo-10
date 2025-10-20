@@ -2,19 +2,15 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from DataBase.models import Turno, Persona
 from DataBase.database import get_db
-import re
+from Utils.utils import validar_dni
 
 router = APIRouter()
 
 # Obtener los turnos de una fecha
 @router.get("/turnos-por-persona")
 def turnos_por_persona(dni: str = Query(..., description="DNI de 8 dígitos"), db: Session = Depends(get_db)):
-    # Limpiar espacios
-    dni = dni.strip()
     
-    # Validar formato del DNI
-    if not re.fullmatch(r"\d{8}", dni):
-        raise HTTPException(status_code=400, detail="El DNI debe contener exactamente 8 números")
+    validar_dni(dni)
     
     try:
         turnos = db.query(Turno).join(Persona).filter(
