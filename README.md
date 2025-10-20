@@ -47,6 +47,4 @@ ___
 
 
 ## Postman collection
-**HITO 1:** https://galactic-shadow-682463.postman.co/workspace/435e29c0-555d-4b7e-8290-b2619a4faaf5
-
-**HITO 2:**
+**HITOS 1 y 2:** https://galactic-shadow-682463.postman.co/workspace/435e29c0-555d-4b7e-8290-b2619a4faaf5
