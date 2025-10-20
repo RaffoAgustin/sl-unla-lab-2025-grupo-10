@@ -27,7 +27,6 @@ def cancelar_turno(id: int, db: Session = Depends(get_db)):
 
         # La cancelacion libera el turno para que otra persona lo pueda tomar
         turno.estado = ESTADOS_TURNO[1]  # "Cancelado"
-        turno.persona_id = None  # Libera la asignación de persona
         db.commit()
         db.refresh(turno)
 
@@ -37,7 +36,7 @@ def cancelar_turno(id: int, db: Session = Depends(get_db)):
                 "fecha": turno.fecha,
                 "hora": turno.hora,
                 "estado": turno.estado,
-                "persona_id": turno.persona_id  # Ahora es null
+                "persona_id": turno.persona_id 
             }
         }
 
