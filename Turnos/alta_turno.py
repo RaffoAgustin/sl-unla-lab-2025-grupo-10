@@ -12,13 +12,6 @@ router = APIRouter()
 @router.post("/turno", status_code=status.HTTP_201_CREATED)
 def crear_turno(datos_turno: TurnoCreate, db: Session = Depends(get_db)):
     try:
-
-        if datos_turno.hora not in HORARIOS_VALIDOS:
-            raise HTTPException(
-                status_code=400,
-                detail="El turno debe estar entre las 09:00 y 17:00 en intervalos de 30 minutos"
-            )
-        
         existe = db.query(Turno).filter(
             Turno.fecha == datos_turno.fecha,
             Turno.hora == datos_turno.hora
