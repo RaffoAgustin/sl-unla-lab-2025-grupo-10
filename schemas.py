@@ -87,6 +87,23 @@ class TurnoCreate(BaseModel):
             raise ValueError("La hora del turno no está en los horarios permitidos")
         return v
 
+class TurnoUpdate(BaseModel):
+    fecha: str
+    hora: time
+    
+    class Config:
+        from_attributes = True
+
+    @field_validator("fecha")
+    def validar_fecha(cls, v: str) -> date:
+        return validar_y_convertir_fecha(v)
+
+    @field_validator("hora")
+    def validar_hora(cls, v: time):
+        if v not in HORARIOS_VALIDOS:
+            raise ValueError("La hora del turno no está en los horarios permitidos")
+        return v
+
 
 class FechaQuery(BaseModel):
     fecha: str
