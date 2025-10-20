@@ -3,6 +3,7 @@ from datetime import date, time, datetime
 from typing import Optional
 import re
 from Utils.config import HORARIOS_VALIDOS
+from Utils.utils import validar_y_convertir_fecha
 
 class PersonaCreate(BaseModel):
     nombre: str
@@ -77,28 +78,8 @@ class TurnoCreate(BaseModel):
         from_attributes = True
 
     @field_validator("fecha")
-    def validar_fecha_turno(cls, v: str) -> date:
-        v = v.strip()
-
-        # Validar caracteres permitidos (solo números y separadores '-' o '/')
-        if not re.fullmatch(r"[0-9/-]+", v):
-            raise ValueError("La fecha solo puede contener números y los separadores '-' o '/'")
-
-        # Intentar convertir a date usando varios formatos
-        for fmt in ("%Y-%m-%d", "%d/%m/%Y", "%d-%m-%Y"):
-            try:
-                fecha_obj = datetime.strptime(v, fmt).date()
-                break
-            except ValueError:
-                continue
-        else:
-            raise ValueError("Formato de fecha inválido. Usar YYYY-MM-DD o DD/MM/YYYY")
-
-        # Validar que no sea fecha pasada
-        if fecha_obj < date.today():
-            raise ValueError("La fecha del turno no puede ser pasada")
-
-        return fecha_obj  # Devuelve un date listo para usar en SQLAlchemy
+    def validar_fecha(cls, v: str) -> date:
+        return validar_y_convertir_fecha(v)
 
     @field_validator("hora")
     def validar_hora(cls, v: time):
@@ -111,28 +92,8 @@ class FechaQuery(BaseModel):
     fecha: str
 
     @field_validator("fecha")
-    def validar_fecha_turno(cls, v: str) -> date:
-        v = v.strip()
-
-        # Validar caracteres permitidos (solo números y separadores '-' o '/')
-        if not re.fullmatch(r"[0-9/-]+", v):
-            raise ValueError("La fecha solo puede contener números y los separadores '-' o '/'")
-
-        # Intentar convertir a date usando varios formatos
-        for fmt in ("%Y-%m-%d", "%d/%m/%Y", "%d-%m-%Y"):
-            try:
-                fecha_obj = datetime.strptime(v, fmt).date()
-                break
-            except ValueError:
-                continue
-        else:
-            raise ValueError("Formato de fecha inválido. Usar YYYY-MM-DD o DD/MM/YYYY")
-
-        # Validar que no sea fecha pasada
-        if fecha_obj < date.today():
-            raise ValueError("La fecha del turno no puede ser pasada")
-
-        return fecha_obj  # Devuelve un date listo para usar en SQLAlchemy
+    def validar_fecha(cls, v: str) -> date:
+        return validar_y_convertir_fecha(v)
 
 
 class TurnoResponse(BaseModel):

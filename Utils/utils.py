@@ -97,3 +97,26 @@ def validar_dni(dni: str):
     # Validar formato del DNI
     if not re.fullmatch(r"\d{8}", dni):
         raise HTTPException(status_code=400, detail="El DNI debe contener exactamente 8 números")
+
+def validar_y_convertir_fecha(v: str) -> date:
+        v = v.strip()
+
+        # Validar caracteres permitidos (solo números y separadores '-' o '/')
+        if not re.fullmatch(r"[0-9/-]+", v):
+            raise ValueError("La fecha solo puede contener números y los separadores '-' o '/'")
+
+        # Intentar convertir a date usando varios formatos
+        for fmt in ("%Y-%m-%d", "%d/%m/%Y", "%d-%m-%Y"):
+            try:
+                fecha_obj = datetime.strptime(v, fmt).date()
+                break
+            except ValueError:
+                continue
+        else:
+            raise ValueError("Formato de fecha inválido. Usar YYYY-MM-DD o DD/MM/YYYY")
+
+        # Validar que no sea fecha pasada
+        if fecha_obj < date.today():
+            raise ValueError("La fecha del turno no puede ser pasada")
+
+        return fecha_obj  # Devuelve un date listo para usar en SQLAlchemy
