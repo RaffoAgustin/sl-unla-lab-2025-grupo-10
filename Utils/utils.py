@@ -87,8 +87,8 @@ def validar_y_formatear_fecha(fecha: str):
     if fecha_obj < date.today():
         raise HTTPException(status_code=400, detail="La fecha del turno no puede ser pasada")
     
-    # Transformar fecha a formato "YYYY-MM-DD"
-    return fecha_obj.isoformat()
+    # Devuelvo objeto date
+    return fecha_obj
 
 def validar_dni(dni: str):
     # Limpiar espacios
