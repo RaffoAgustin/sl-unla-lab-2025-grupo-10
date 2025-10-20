@@ -52,9 +52,9 @@ app.include_router(obtener_turno_particular,
                    prefix="/obtener_turno_particular", tags=["Obtener Turno Particular"])
 app.include_router(calculo_turnos_disponibles,
                    prefix="/calculo_turnos_disponibles", tags=["Calcular Turnos Disponibles"])
-app.include_router(turnos_de_una_fecha, prefix="/turnos_de_una_fecha",
+app.include_router(turnos_de_una_fecha, prefix="/reportes",
                    tags=["Obtener Turnos De Una Fecha"])
-app.include_router(turnos_de_una_persona, prefix="/turnos_de_una_persona",
+app.include_router(turnos_de_una_persona, prefix="/reportes",
                    tags=["Obtener Turnos De Una Persona"])
 app.include_router(turnos_confirmados_periodo, prefix="/turnos_confirmados_periodo",
                    tags=["Turnos confirmados en un periodo"]),
