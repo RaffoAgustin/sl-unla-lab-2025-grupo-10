@@ -49,7 +49,7 @@ def turnos_cancelados_mes_actual(db: Session = Depends(get_db)):
 
     return {
         "anio": hoy.year,
-        "mes": MESES[hoy.month],
+        "mes": MESES[hoy.month-1],
         "cantidad": total_cancelados,
         "fechas": fechas
     }
