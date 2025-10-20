@@ -37,7 +37,7 @@ app.include_router(eliminar_router, prefix="/eliminar_persona",
                    tags=["Eliminar Persona"])
 app.include_router(
     modificar_router, prefix="/modificar_persona", tags=["Modificar Persona"])
-app.include_router(personas_con_x_turnos_cancelados, prefix="/personas_con_x_turnos_cancelados",
+app.include_router(personas_con_x_turnos_cancelados, prefix="/reportes",
                    tags=["Personas con un minimo de turnos cancelados"])
 app.include_router(estado_personas_habilitadas, prefix="/reportes", tags=["Estado Personas Habilitadas o No"])
 
@@ -56,7 +56,7 @@ app.include_router(turnos_de_una_fecha, prefix="/reportes",
                    tags=["Obtener Turnos De Una Fecha"])
 app.include_router(turnos_de_una_persona, prefix="/reportes",
                    tags=["Obtener Turnos De Una Persona"])
-app.include_router(turnos_confirmados_periodo, prefix="/turnos_confirmados_periodo",
+app.include_router(turnos_confirmados_periodo, prefix="/reportes",
                    tags=["Turnos confirmados en un periodo"]),
 app.include_router(confirmar_turno, tags=["Confirmar Turno"]),
 app.include_router(cancelar_turno, tags=["Cancelar Turno"]),
