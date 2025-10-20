@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from dateutil.relativedelta import relativedelta
 from datetime import datetime, date, timedelta
 from Utils.config import MAX_CANCELADOS, ESTADOS_TURNO
-
+import re
 
 def calcular_edad(fecha):
     if isinstance(fecha, date):
@@ -65,3 +65,35 @@ def actualizar_turnos_vencidos(db: Session):
         return len(turnos_vencidos)
 
     return 0
+
+def validar_y_formatear_fecha(fecha: str):
+    fecha = fecha.strip()
+
+    # Validar caracteres permitidos
+    if not re.fullmatch(r"[0-9/-]+", fecha):
+        raise HTTPException(status_code=400, detail="La fecha solo puede contener números y '-' o '/'")
+
+    # Convertir a date usando varios formatos
+    for fmt in ("%Y-%m-%d", "%d/%m/%Y", "%d-%m-%Y"):
+        try:
+            fecha_obj = datetime.strptime(fecha, fmt).date()
+            break
+        except ValueError:
+            continue
+    else:
+        raise HTTPException(status_code=400, detail="Formato de fecha inválido. Usar YYYY-MM-DD o DD/MM/YYYY")
+
+    # Validar que no sea pasada
+    if fecha_obj < date.today():
+        raise HTTPException(status_code=400, detail="La fecha del turno no puede ser pasada")
+    
+    # Transformar fecha a formato "YYYY-MM-DD"
+    return fecha_obj.isoformat()
+
+def validar_dni(dni: str):
+    # Limpiar espacios
+    dni = dni.strip()
+    
+    # Validar formato del DNI
+    if not re.fullmatch(r"\d{8}", dni):
+        raise HTTPException(status_code=400, detail="El DNI debe contener exactamente 8 números")
