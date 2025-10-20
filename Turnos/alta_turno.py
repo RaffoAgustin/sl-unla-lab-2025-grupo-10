@@ -5,6 +5,7 @@ from DataBase.models import Turno, Persona
 from schemas import TurnoCreate
 from Utils.utils import validar_cancelaciones
 from Utils.config import HORARIOS_VALIDOS
+from Utils.config import ESTADOS_TURNO
 
 router = APIRouter()
 
@@ -21,7 +22,8 @@ def crear_turno(datos_turno: TurnoCreate, db: Session = Depends(get_db)):
         
         existe = db.query(Turno).filter(
             Turno.fecha == datos_turno.fecha,
-            Turno.hora == datos_turno.hora
+            Turno.hora == datos_turno.hora,
+            Turno.estado != ESTADOS_TURNO[1] #Excluye a los turnos cancelados
         ).first()
 
         if existe:
