@@ -7,7 +7,7 @@ from DataBase.database import get_db
 
 router = APIRouter()
 
-@router.get("/reportes/turnos-cancelados")
+@router.get("/turnos-cancelados-minimo")
 def personas_con_turnos_cancelados(
     min: int = Query(..., description="Minimo de turnos cancelados"), #Pide al usuario el mínimo de Turnos cancelados (... significa obligatorio)
     db: Session = Depends(get_db)  #Inyecta automáticamente una sesión de base de datos

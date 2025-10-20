@@ -9,7 +9,7 @@ from schemas import FechaQuery
 
 router = APIRouter()
 
-@router.get("/reportes/turnos-confirmados")
+@router.get("/turnos-confirmados-periodo")
 def turnos_confirmados_periodo(
     desde: str = Query(..., description="Fecha futura en formato DD-MM-YYYY"), #Consulta obligatoria de la fecha inicial (Recibo un string)
     hasta: Optional[str] = Query(None, description="Fecha futura en formato DD-MM-YYYY"),  #Consulta opcional de la fecha límite
@@ -17,7 +17,7 @@ def turnos_confirmados_periodo(
     db: Session = Depends(get_db)  #Inyecta automáticamente una sesión de base de datos
 ):
     ## Ejemplo de Endpoint: 
-    ## /reportes/turnos-confirmados?desde=20-10-2025&hasta=30-12-2025&pag=3
+    ## /reportes/turnos-confirmados-periodo?desde=20-10-2025&hasta=30-12-2025&pag=3
 
     try:
         # Convierto el string "desde" a un objeto date a través de la clase FechaQuery y sus validaciones
