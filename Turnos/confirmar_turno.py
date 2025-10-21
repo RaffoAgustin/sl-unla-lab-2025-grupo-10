@@ -32,11 +32,13 @@ def confirmar_turno(id: int, db: Session = Depends(get_db)):
         db.refresh(turno)
 
         return {
-            "id": turno.id,
-            "fecha": turno.fecha,
-            "hora": turno.hora,
-            "estado": turno.estado,
-            "persona_id": turno.persona_id
+            "Turno confirmado exitosamente": {
+                "id": turno.id,
+                "fecha": turno.fecha,
+                "hora": turno.hora,
+                "estado": turno.estado,
+                "persona_id": turno.persona_id
+            }
         }
 
     except Exception as e:
