@@ -1,84 +1,78 @@
 from fastapi import APIRouter, HTTPException, status, Depends
 from sqlalchemy.orm import Session
-from DataBase.models import Turno, Persona
+from DataBase.models import Persona
 from DataBase.database import get_db
-from schemas import TurnoUpdate
-from Utils.config import ESTADOS_TURNO
+from schemas import PersonaUpdate
+from Utils.utils import calcular_edad
 
 router = APIRouter()
 
-#Modificar un turno
-@router.put("/turnos/{id}")
-def modificar_turno(id: int, datos_turno: TurnoUpdate, db: Session=Depends(get_db)): #Usamos la plantilla TurnoCreate para los datos_turno
-   #Guarda en variable "turno" un turno con el mismo id del db.
+#Modificar una Persona
+@router.put("/personas/{id}")
+def modificar_persona(
+    id: int, 
+    datos_persona: PersonaUpdate,  #Usamos la plantilla PersonaModify para los datos_persona
+    db: Session=Depends(get_db) #Inyecta automáticamente una sesión de base de datos
+    ):
+
     try:
-        turno = db.get(Turno, id)
 
-        #Si no encuentra al turno, entonces lanza error 404
-        if not turno:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Turno no encontrado"
-            )
-        
-        #Guardo en variable "persona" a la persona asociada al turno
-        persona = db.get(Persona, datos_turno.persona_id)
+   #Guarda en variable "persona" una persona con el mismo id del db.
+        persona = db.get(Persona, id)
 
-        #Reviso si la persona indicada existe
+        #Si no encuentra a la persona, entonces lanza error 404
         if not persona:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail="Persona asociada al turno no encontrada"
-            )
-
-        existe = db.query(Turno).filter(
-            Turno.fecha == datos_turno.fecha,
-            Turno.hora == datos_turno.hora,
-            Turno.estado != ESTADOS_TURNO[1] #Excluye a los turnos cancelados
-        ).first()
-
-        if existe:
-            raise HTTPException(
-                status_code=400,
-                detail="Este turno ya está ocupado"
+                detail="Persona no encontrada"
             )
         
-        #Actualizo los datos del turno
-        turno.fecha = datos_turno.fecha
-        turno.hora = datos_turno.hora
-        #No cambio el estado del turno porque el gestor de estado se encuentra en el punto D (Segundo hito)
-        
+        # Verificar si el DNI nuevo ya existe (si se está cambiando)
+        if persona.dni != datos_persona.dni: #Si el anterior dni es distinto al nuevo, es decir, si se está cambiando
+            existe_dni = db.query(Persona).filter(Persona.dni == datos_persona.dni).first() #busco el dni nuevo en la db
+            if existe_dni: #Si existe en la db, lanzo la excepción
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="El DNI ya está registrado"
+                )
+            
+        #Actualizo los datos
+        persona.nombre = datos_persona.nombre
+        persona.email = datos_persona.email
+        persona.dni = datos_persona.dni
+        persona.telefono = datos_persona.telefono
+        persona.fecha_nacimiento = datos_persona.fecha_nacimiento
+        edad = calcular_edad(persona.fecha_nacimiento)
+
 
         #Intento guardar los cambios
         try:
             db.commit()
-            db.refresh(turno)
+            db.refresh(persona)
             return {
-                "mensaje": f"Turno con ID {id} actualizado correctamente",
-                "turno":{
-                    "id": turno.id,
-                    "fecha": turno.fecha,
-                    "hora": turno.hora,
-                    "estado": turno.estado,
-                    "persona":{
+                "mensaje": f"Persona con ID {id} actualizada correctamente",
+                "persona":{
                         "id": persona.id,
                         "nombre": persona.nombre,
                         "email": persona.email,
                         "dni": persona.dni,
-                    }
+                        "telefono": persona.telefono,
+                        "fecha_nacimiento": persona.fecha_nacimiento,
+                        "edad": edad
                 }
             }
-        
+    
         #Si ocurre un error inesperado, lanza error 500
         except Exception as e:
             db.rollback()
+            print("Error al actualizar persona:", e)
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Error inesperado al actualizar turno"
+                detail="Error Inesperado al actualizar persona"
             )
         
     except Exception as e:
         raise HTTPException(
         status_code=500,
         detail=f"Error interno del servidor: {str(e)}"
-    )
+        )
