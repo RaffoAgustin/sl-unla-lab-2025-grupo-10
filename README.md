@@ -43,7 +43,7 @@ ___
 ## Video explicativo
 **HITO 1:** https://drive.google.com/file/d/16btJhgHiw4hVxxl8ZMFuoZuFyUfV1s-m/
 
-**HITO 2:** 
+**HITO 2:** https://drive.google.com/file/d/1A_cVLdkJHP5NYEHxOC-chJFQJZafcyoO/
 
 
 ## Postman collection
