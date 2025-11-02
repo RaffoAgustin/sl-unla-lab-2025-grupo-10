@@ -21,16 +21,22 @@ def turnos_por_persona(dni: str = Query(..., description="DNI de 8 dígitos"), d
         # Si esa persona no tiene turnos:
         if not turnos:
             return {"mensaje": f"No se encontraron turnos para la persona con DNI = {dni}"}
-    
-        return [
+        
+        persona = turnos[0].persona.nombre
+        turnos_persona = [
         {
             "ID": t.id,
             "Fecha": t.fecha,
             "Hora": t.hora,
             "Estado": t.estado,
-        } 
+        }
         for t in turnos
     ]
-
+    
+        return {
+            "Nombre": persona,
+            "Turnos": turnos_persona
+        }
+    
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al obtener los turnos de la persona con DNI = {dni}: {str(e)}")
