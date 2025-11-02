@@ -9,7 +9,7 @@ router = APIRouter()
 
 # Obtener los turnos de una fecha
 @router.get("/csv/turnos-por-fecha")
-def obtener_turnos_de_una_fecha(fecha: str, db: Session = Depends(get_db)):
+def exportar_turnos_de_una_fecha_csv(fecha: str, db: Session = Depends(get_db)):
     try:
         fecha_formateada = validar_y_formatear_fecha_especial(fecha)
         turnos = db.query(Turno).join(Persona).filter(Turno.fecha == fecha_formateada).all()

@@ -7,9 +7,9 @@ import pandas as pd
 
 router = APIRouter()
 
-# Obtener los turnos de una fecha
+# Obtener los turnos de una persona
 @router.get("/csv/turnos-por-persona")
-def turnos_por_persona(
+def exportar_turnos_por_persona_csv(
     dni: str = Query(..., description="DNI de 8 dígitos"),
     db: Session = Depends(get_db)
 ):

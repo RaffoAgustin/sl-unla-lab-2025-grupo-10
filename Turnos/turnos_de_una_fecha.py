@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from DataBase.models import Turno, Persona
 from DataBase.database import get_db
-from Utils.utils import validar_y_formatear_fecha
+from Utils.utils import validar_y_formatear_fecha_especial
 
 router = APIRouter()
     
@@ -14,7 +14,7 @@ def obtener_turnos_de_una_fecha(
 ):
     
     try:
-        fecha_formateada = validar_y_formatear_fecha(fecha)
+        fecha_formateada = validar_y_formatear_fecha_especial(fecha)
         turnos = db.query(Turno).join(Persona).filter(Turno.fecha == fecha_formateada).all()
         
         # Si no hay turnos en esa fecha
