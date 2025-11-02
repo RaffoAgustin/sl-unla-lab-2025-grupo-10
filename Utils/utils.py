@@ -90,6 +90,26 @@ def validar_y_formatear_fecha(fecha: str):
     # Devuelvo objeto date
     return fecha_obj
 
+def validar_y_formatear_fecha_especial(fecha: str):
+    fecha = fecha.strip()
+
+    # Validar caracteres permitidos
+    if not re.fullmatch(r"[0-9/-]+", fecha):
+        raise HTTPException(status_code=400, detail="La fecha solo puede contener números y '-' o '/'")
+
+    # Convertir a date usando varios formatos
+    for fmt in ("%Y-%m-%d", "%d/%m/%Y", "%d-%m-%Y"):
+        try:
+            fecha_obj = datetime.strptime(fecha, fmt).date()
+            break
+        except ValueError:
+            continue
+    else:
+        raise HTTPException(status_code=400, detail="Formato de fecha inválido. Usar YYYY-MM-DD o DD/MM/YYYY")
+    
+    # Devuelvo objeto date
+    return fecha_obj
+
 def validar_dni(dni: str):
     # Limpiar espacios
     dni = dni.strip()
