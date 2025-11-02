@@ -9,10 +9,9 @@ router = APIRouter()
 # Obtener los turnos de una fecha
 @router.get("/turnos-por-persona")
 def turnos_por_persona(dni: str = Query(..., description="DNI de 8 dígitos"), db: Session = Depends(get_db)):
-    
-    validar_dni(dni)
-    
+       
     try:
+        validar_dni(dni)
         turnos = db.query(Turno).join(Persona).filter(
             Turno.persona_id == Persona.id,
             Persona.dni == dni

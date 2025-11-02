@@ -12,9 +12,9 @@ def obtener_turnos_de_una_fecha(
     fecha: str,
     db: Session = Depends(get_db)  #Inyecta automáticamente una sesión de base de datos
 ):
-    fecha_formateada = validar_y_formatear_fecha(fecha)
     
     try:
+        fecha_formateada = validar_y_formatear_fecha(fecha)
         turnos = db.query(Turno).join(Persona).filter(Turno.fecha == fecha_formateada).all()
         
         # Si no hay turnos en esa fecha
