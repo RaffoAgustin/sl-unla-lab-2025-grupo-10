@@ -20,20 +20,35 @@ def obtener_turnos_de_una_fecha(
         # Si no hay turnos en esa fecha
         if not turnos:
             return {"mensaje": f"No se encontraron turnos para la fecha {fecha_formateada}"}
-        
+            
+        # Diccionario auxiliar para agrupar por persona
+        personas_dict = {}
+
+        for t in turnos:
+            dni = t.persona.dni
+
+            # Si la persona no está aún en el diccionario, la agregamos
+            if dni not in personas_dict:
+                personas_dict[dni] = {
+                    "Nombre": t.persona.nombre,
+                    "DNI": dni,
+                    "Turnos": []
+                }
+
+            # Agregamos el turno a la lista de esa persona
+            personas_dict[dni]["Turnos"].append({
+                "Hora": t.hora,
+                "Estado": t.estado
+            })
+
+        # Convertimos el diccionario en una lista para devolverlo
+        personas_lista = list(personas_dict.values())
+
+        # Retornamos el resultado agrupado
         return {
             "Fecha": fecha_formateada,
-            "Turnos": [
-        {
-            "Hora": t.hora,
-            "Estado": t.estado,
-            "Persona": {
-                "nombre": t.persona.nombre,
-                "dni": t.persona.dni,
-            } if t.persona else None
-        } for t in turnos
-    ]
-}
-    
+            "Personas": personas_lista
+        }
+        
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al obtener los turnos de la fecha {fecha_formateada}: {str(e)}")
