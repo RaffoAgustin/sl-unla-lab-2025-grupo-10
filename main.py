@@ -24,6 +24,9 @@ from Turnos.confirmar_turno import router as confirmar_turno
 from Turnos.cancelar_turno import router as cancelar_turno
 from Turnos.turnos_Cancelados_Mes_Actual import router as turnosCanceladosPorMes
 
+from turnos_por_persona_csv import router as turnosPorPersonaCsv
+from turnos_por_fecha_csv import router as turnosPorFechaCsv
+
 app = FastAPI(title="Mi API")
 
 Base.metadata.create_all(bind=engine)
@@ -61,6 +64,9 @@ app.include_router(turnos_confirmados_periodo, prefix="/reportes",
 app.include_router(confirmar_turno, tags=["Confirmar Turno"]),
 app.include_router(cancelar_turno, tags=["Cancelar Turno"]),
 app.include_router(turnosCanceladosPorMes,prefix="/reportes", tags=["Turnos Cancelados Por Mes"])
+
+app.include_router(turnosPorPersonaCsv, prefix="/reportes", tags=["Turnos Por Persona en CSV"])
+app.include_router(turnosPorFechaCsv, prefix="/reportes", tags=["Turnos Por Fecha en CSV"])
 
 
 @app.get("/")
