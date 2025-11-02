@@ -27,30 +27,44 @@ def exportar_turnos_de_una_fecha_csv(fecha: str, db: Session = Depends(get_db)):
             
             # Si la persona no está aún en el diccionario, la agregamos
             if dni not in personas_dict:
-                personas_dict[dni] = { "Nombre": t.persona.nombre,
-                                      "DNI": dni,
-                                      "Turnos": [] 
+                personas_dict[dni] = {
+                "Nombre": t.persona.nombre,
+                "DNI": dni,
+                "Turnos": [] 
                 }
                 
                 # Agregamos el turno a la lista de esa persona
-                personas_dict[dni]["Turnos"].append({"ID":t.id, "Hora": t.hora.strftime("%H:%M"), "Estado": t.estado })
+                personas_dict[dni]["Turnos"].append(
+                {"ID":t.id,
+                "Hora": t.hora.strftime("%H:%M"),
+                "Estado": t.estado })
                 
-                # Convertimos el diccionario en una lista para devolverlo
-                personas_lista = list(personas_dict.values())
+                # Aplanar estructura: una fila por turno
+                filas = []
+                for persona in personas_dict.values():
+                    for turno in persona["Turnos"]:
+                        filas.append({
+                            "Nombre": persona["Nombre"],
+                            "DNI": persona["DNI"],
+                            "ID Turno": turno["ID"],
+                            "Hora": turno["Hora"],
+                            "Estado": turno["Estado"]
+                        })
                 
-                df = pd.DataFrame(personas_lista)
-                
-                # Escribir CSV con título en la primera línea
-                nombre_archivo = "turnos_por_fecha.csv"
-                with open(nombre_archivo, "w", encoding="utf-8") as f:
-                    f.write(f"Turnos para la fecha {fecha_formateada}\n")  # <-- Título
-                    df.to_csv(f, index=False) 
+                # Crear DataFrame con formato tabular limpio
+        df = pd.DataFrame(filas)
+        
+        # Escribir CSV con título en la primera línea
+        nombre_archivo = "turnos_por_fecha.csv"
+        with open(nombre_archivo, "w", encoding="utf-8", newline='') as f:
+            f.write(f"Turnos para la fecha {fecha_formateada}\n")  # <-- Título
+            df.to_csv(f, index=False)
                     
-                    # Retornar el archivo como descarga
-            return FileResponse(
-                nombre_archivo,
-                media_type="text/csv",
-                filename=f"turnos_{fecha_formateada}.csv"
-            )
+        # Retornar el archivo como descarga
+        return FileResponse(
+            nombre_archivo,
+            media_type="text/csv",
+            filename=f"turnos_{fecha_formateada}.csv"
+        )
     
     except Exception as e: raise HTTPException(status_code=500, detail=f"Error al obtener los turnos de la fecha {fecha_formateada}: {str(e)}")

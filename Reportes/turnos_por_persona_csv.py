@@ -25,23 +25,26 @@ def exportar_turnos_por_persona_csv(
         if not turnos:
             return {"mensaje": f"No se encontraron turnos para la persona con DNI = {dni}"}
 
-        turnos_persona = {
-            f"Turnos de {turnos[0].persona.nombre if turnos else None}": [
-                {
-                    "ID": t.id,
-                    "Fecha": t.fecha.strftime("%Y/%m/%d"),
-                    "Hora": t.hora.strftime("%H:%M"),
-                    "Estado": t.estado,
-                } for t in turnos
-            ]
-        }
+        # Crear lista tabular de turnos
+        filas = []
+        for t in turnos:
+            filas.append({
+                "ID Turno": t.id,
+                "Fecha": t.fecha.strftime("%Y/%m/%d"),
+                "Hora": t.hora.strftime("%H:%M"),
+                "Estado": t.estado
+            })
 
-        # Convertir a DataFrame y guardar CSV
+        # Crear DataFrame
+        df = pd.DataFrame(filas)
+
+        # Guardar CSV con título
         nombre_archivo = f"Reportes/turnos_{dni}.csv"
-        df = pd.DataFrame(turnos_persona)
-        df.to_csv(nombre_archivo, index=False, encoding="utf-8-sig")
+        with open(nombre_archivo, "w", encoding="utf-8", newline='') as f:
+            f.write(f"Turnos de {turnos[0].persona.nombre}: DNI {turnos[0].persona.dni}\n")
+            df.to_csv(f, index=False)
 
-        # Retornar el archivo como descarga
+        # Retornar archivo como descarga
         return FileResponse(
             nombre_archivo,
             media_type="text/csv",
