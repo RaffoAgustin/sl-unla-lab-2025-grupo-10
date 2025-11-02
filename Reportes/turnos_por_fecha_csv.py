@@ -4,6 +4,7 @@ from DataBase.models import Turno, Persona
 from DataBase.database import get_db
 from Utils.utils import validar_y_formatear_fecha_especial
 import pandas as pd
+from fastapi.responses import FileResponse
 
 router = APIRouter()
 
@@ -32,7 +33,7 @@ def exportar_turnos_de_una_fecha_csv(fecha: str, db: Session = Depends(get_db)):
                 }
                 
                 # Agregamos el turno a la lista de esa persona
-                personas_dict[dni]["Turnos"].append({ "Hora": t.hora.strftime("%H:%M"), "Estado": t.estado })
+                personas_dict[dni]["Turnos"].append({"ID":t.id, "Hora": t.hora.strftime("%H:%M"), "Estado": t.estado })
                 
                 # Convertimos el diccionario en una lista para devolverlo
                 personas_lista = list(personas_dict.values())
@@ -45,7 +46,11 @@ def exportar_turnos_de_una_fecha_csv(fecha: str, db: Session = Depends(get_db)):
                     f.write(f"Turnos para la fecha {fecha_formateada}\n")  # <-- Título
                     df.to_csv(f, index=False) 
                     
-                # Retornar mensaje con nombre de archivo y lista de turnos
-            return { "archivo": nombre_archivo, "turnos": personas_lista }
+                    # Retornar el archivo como descarga
+            return FileResponse(
+                nombre_archivo,
+                media_type="text/csv",
+                filename=f"turnos_{fecha_formateada}.csv"
+            )
     
     except Exception as e: raise HTTPException(status_code=500, detail=f"Error al obtener los turnos de la fecha {fecha_formateada}: {str(e)}")
