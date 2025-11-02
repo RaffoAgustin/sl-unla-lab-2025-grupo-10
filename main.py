@@ -24,8 +24,8 @@ from Turnos.confirmar_turno import router as confirmar_turno
 from Turnos.cancelar_turno import router as cancelar_turno
 from Turnos.turnos_Cancelados_Mes_Actual import router as turnosCanceladosPorMes
 
-from turnos_por_persona_csv import router as turnosPorPersonaCsv
-from turnos_por_fecha_csv import router as turnosPorFechaCsv
+from Reportes.turnos_por_persona_csv import router as turnosPorPersonaCsv
+from Reportes.turnos_por_fecha_csv import router as turnosPorFechaCsv
 
 app = FastAPI(title="Mi API")
 
