@@ -26,6 +26,8 @@ from Turnos.turnos_Cancelados_Mes_Actual import router as turnosCanceladosPorMes
 
 from Reportes.turnos_por_persona_csv import router as turnosPorPersonaCsv
 from Reportes.turnos_por_fecha_csv import router as turnosPorFechaCsv
+from Reportes.turnos_Cancelados_Mes_Actual_csv import router as turnosCanceladosMesActualCsv
+from Reportes.estado_Personas_Habilitadas_csv import router as estadoPersonasHabilitadasCsv
 
 app = FastAPI(title="Mi API")
 
@@ -67,7 +69,8 @@ app.include_router(turnosCanceladosPorMes,prefix="/reportes", tags=["Turnos Canc
 
 app.include_router(turnosPorPersonaCsv, prefix="/reportes", tags=["Turnos Por Persona en CSV"])
 app.include_router(turnosPorFechaCsv, prefix="/reportes", tags=["Turnos Por Fecha en CSV"])
-
+app.include_router(turnosCanceladosMesActualCsv, prefix="/reportes", tags=["Turnos Cancelados Mes Actual CSV"])
+app.include_router(estadoPersonasHabilitadasCsv, prefix="/reportes", tags=["Estado Personas Habilitadas CSV"])
 
 @app.get("/")
 def read_root():
