@@ -45,6 +45,9 @@ def turnos_confirmados_periodo(
         if hasta: #Si "hasta" fue indicado...
             turnosConfirmados = turnosConfirmados.filter(Turno.fecha <= fecha_hasta) #...También filtro por las fechas más viejas que "hasta"
 
+        #Guardo la cantidad de turnos totales encontrados en una variable para devolverla más adelante
+        turnosConfirmadosTotales = turnosConfirmados.count()
+
         #TODO: La variable "cantElementosXPagina" debería ser una variable de entorno, quizas.
         cantElementosXPagina = 5
 
@@ -58,8 +61,9 @@ def turnos_confirmados_periodo(
 
         return {
             "pagina": pag,
-            "cantElementos": cantElementosXPagina,
-            "turnos": paginaDeTurnos,
+            "turnosConfirmadosTotales": turnosConfirmadosTotales,
+            "cantElementosPagActual": len(paginaDeTurnos),
+            "turnos": paginaDeTurnos if paginaDeTurnos else "No se encontraron turnos en la página especificada",
         }
     
     except Exception as e:
