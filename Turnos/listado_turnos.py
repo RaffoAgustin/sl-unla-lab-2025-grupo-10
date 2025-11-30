@@ -15,38 +15,44 @@ def listado_turnos(db: Session = Depends(get_db)):
         # Actualizar automáticamente turnos vencidos antes de mostrar la lista
         turnos_confirmados_actualizados = actualizar_turnos_vencidos(db)
 
-        # Usar LEFT JOIN para incluir turnos sin persona asignada (cancelados)
-        resultados = db.query(Turno, Persona).outerjoin(
-            Persona).order_by(Turno.fecha, Turno.hora).all()
+        # Traer todas las personas con sus turnos relacionados
+        personas = db.query(Persona).all()
 
-        if not resultados:
+
+        if not personas:
             raise HTTPException(
-                status_code=404, detail="No se han encontrado turnos en la base de datos")
+                status_code=404, detail="No se han encontrado personas en la base de datos")
 
-        lista_turnos = []
-        for turno, persona in resultados:
-            turno_datos = {
-                "id": turno.id,
-                "fecha": turno.fecha,
-                "hora": turno.hora,
-                "estado": turno.estado,
-            }
+        lista_personas = []
 
-            # Solo agregar datos de persona si existe (no es null)
-            if persona:
-                turno_datos["persona"] = {
+        for persona in personas:
+            # Obtener los turnos de esta persona, ordenados por fecha y hora
+            turnos = db.query(Turno).filter(Turno.persona_id == persona.id).order_by(Turno.fecha, Turno.hora).all()
+
+            # Solo agregar si tiene turnos asignados
+            if turnos:
+                persona_datos = {
                     "id": persona.id,
                     "nombre": persona.nombre,
                     "dni": persona.dni,
-                    "telefono": persona.telefono
+                    "telefono": persona.telefono,
+                    "turnos": [
+                        {
+                            "id": turno.id,
+                            "fecha": turno.fecha,
+                            "hora": turno.hora,
+                            "estado": turno.estado,
+                        }
+                        for turno in turnos
+                    ]
                 }
-            else:
-                # Turno sin persona asignada (cancelado o disponible)
-                turno_datos["persona"] = None
+                lista_personas.append(persona_datos)
 
-            lista_turnos.append(turno_datos)
+        if not lista_personas:
+            raise HTTPException(
+                status_code=404, detail="No se han encontrado turnos asignados en la base de datos")
 
-        return lista_turnos
+        return lista_personas
 
     except Exception as e:
         raise HTTPException(
