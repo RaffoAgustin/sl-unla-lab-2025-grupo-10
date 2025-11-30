@@ -76,4 +76,4 @@ def exportar_turnos_de_una_fecha_csv(fecha: str, db: Session = Depends(get_db)):
                 filename=pdf_path.name
             )
     
-    except Exception as e: raise HTTPException(status_code=500, detail=f"Error al obtener los turnos de la fecha {fecha_formateada}: {str(e)}")
+    except Exception as e: raise HTTPException(status_code=500, detail=f"Error al obtener los turnos de la fecha {fecha}: {str(e)}")
