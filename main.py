@@ -34,6 +34,7 @@ from Reportes.PDF.estado_Personas_Habilitadas_pdf import router as estadoPersona
 from Reportes.PDF.turnos_por_fecha_pdf import router as turnosPorFechaPdf
 from Reportes.PDF.turnos_por_persona_pdf import router as turnosPorPersonaPdf
 from Reportes.PDF.turnos_confirmados_periodo_pdf import router as turnosConfirmadosPeriodoPdf
+from Reportes.PDF.personas_con_x_turnos_cancelados_pdf import router as personasConXTurnosCanceladosPdf
 
 app = FastAPI(title="Mi API")
 
@@ -83,6 +84,7 @@ app.include_router(estadoPersonasHabilitadasPdf, prefix="/reportes", tags=["Esta
 app.include_router(turnosPorFechaPdf, prefix="/reportes", tags=["Turnos por Fecha en PDF"])
 app.include_router(turnosPorPersonaPdf, prefix="/reportes", tags=["Turnos por Persona en PDF"])
 app.include_router(turnosConfirmadosPeriodoPdf, prefix="/reportes", tags=["Turnos confirmados periodo en PDF"])
+app.include_router(personasConXTurnosCanceladosPdf, prefix="/reportes", tags=["Personas con X turnos cancelados PDF"])
 
 @app.get("/")
 def read_root():
