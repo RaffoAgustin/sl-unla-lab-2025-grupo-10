@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 from datetime import date
 from typing import Optional
-from Utils.config import ESTADOS_TURNO
+from Utils.config import ESTADOS_TURNO, CANT_ELEMENTOS_X_PAGINA
 from DataBase.models import Turno
 from DataBase.database import get_db
 from schemas import FechaQuery
@@ -48,14 +48,11 @@ def turnos_confirmados_periodo(
         #Guardo la cantidad de turnos totales encontrados en una variable para devolverla más adelante
         turnosConfirmadosTotales = turnosConfirmados.count()
 
-        #TODO: La variable "cantElementosXPagina" debería ser una variable de entorno, quizas.
-        cantElementosXPagina = 5
-
         paginaDeTurnos = (
             turnosConfirmados
             .order_by(Turno.fecha) #Ordeno por fecha de mas antiguo a más reciente
-            .offset(cantElementosXPagina * (pag-1)) #Offset es la cantidad de elementos salteados antes de mostrar.
-            .limit(cantElementosXPagina) #Limito la cantidad de registros por su variable
+            .offset(CANT_ELEMENTOS_X_PAGINA * (pag-1)) #Offset es la cantidad de elementos salteados antes de mostrar.
+            .limit(CANT_ELEMENTOS_X_PAGINA) #Limito la cantidad de registros por su variable
             .all() #Muestra todos los registros bajo estos parámetros
         )
 
@@ -63,7 +60,9 @@ def turnos_confirmados_periodo(
             "pagina": pag,
             "turnosConfirmadosTotales": turnosConfirmadosTotales,
             "cantElementosPagActual": len(paginaDeTurnos),
-            "turnos": paginaDeTurnos if paginaDeTurnos else "No se encontraron turnos en la página especificada",
+            "turnos":  "No se encontraron turnos en el periodo indicado" if turnosConfirmadosTotales == 0
+                        else paginaDeTurnos 
+                        or "No se encontraron turnos en la página indicada" 
         }
     
     except Exception as e:
