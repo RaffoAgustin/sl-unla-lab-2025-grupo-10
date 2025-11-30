@@ -220,3 +220,7 @@ __marimo__/
 *.sqlite
 *.sqlite3
 database.db
+
+#PDF y CSV Creados
+*.pdf 
+*.csv
