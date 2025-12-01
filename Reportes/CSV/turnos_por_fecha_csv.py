@@ -5,6 +5,7 @@ from DataBase.database import get_db
 from Utils.utils import validar_y_formatear_fecha_especial
 import pandas as pd
 from fastapi.responses import FileResponse
+from pathlib import Path
 
 router = APIRouter()
 
@@ -56,13 +57,19 @@ def exportar_turnos_de_una_fecha_csv(fecha: str, db: Session = Depends(get_db)):
         
         # Escribir CSV con título en la primera línea
         nombre_archivo = "turnos_por_fecha.csv"
-        with open(nombre_archivo, "w", encoding="utf-8", newline='') as f:
+
+        ruta_carpeta = Path("Reportes/CSV_Generados")
+        ruta_carpeta.mkdir(parents=True, exist_ok=True)
+
+        ruta_archivo = ruta_carpeta / nombre_archivo
+
+        with open(ruta_archivo, "w", encoding="utf-8", newline='') as f:
             f.write(f"Turnos para la fecha {fecha_formateada}\n")  # <-- Título
             df.to_csv(f, index=False)
                     
         # Retornar el archivo como descarga
         return FileResponse(
-            nombre_archivo,
+            ruta_archivo,
             media_type="text/csv",
             filename=f"turnos_{fecha_formateada}.csv"
         )

@@ -6,6 +6,7 @@ import pandas as pd
 from DataBase.database import get_db
 from DataBase.models import Persona
 from Utils.utils import calcular_edad
+from pathlib import Path
 
 router = APIRouter()
 
@@ -40,13 +41,18 @@ def exportar_estado_personas_csv(
 
         nombre_archivo = "estado_personas.csv"
 
-        with open(nombre_archivo, "w", encoding="utf-8", newline='') as f:
+        ruta_carpeta = Path("Reportes/CSV_Generados")
+        ruta_carpeta.mkdir(parents=True, exist_ok=True)
+
+        ruta_archivo = ruta_carpeta / nombre_archivo
+
+        with open(ruta_archivo, "w", encoding="utf-8", newline='') as f:
             titulo = f"Personas con habilitada={habilitada}\n"
             f.write(titulo)
             df.to_csv(f, index=False)
 
         return FileResponse(
-            nombre_archivo,
+            ruta_archivo,
             media_type="text/csv",
             filename=f"estado_personas_{habilitada}.csv"
         )

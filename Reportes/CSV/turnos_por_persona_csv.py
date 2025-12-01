@@ -5,6 +5,7 @@ from DataBase.database import get_db
 from Utils.utils import validar_dni
 import pandas as pd
 from fastapi.responses import FileResponse
+from pathlib import Path
 
 router = APIRouter()
 
@@ -39,14 +40,20 @@ def exportar_turnos_por_persona_csv(
         df = pd.DataFrame(filas)
 
         # Guardar CSV con título
-        nombre_archivo = f"Reportes/turnos_{dni}.csv"
-        with open(nombre_archivo, "w", encoding="utf-8", newline='') as f:
+        nombre_archivo = f"turnos_{dni}.csv"
+
+        ruta_carpeta = Path("Reportes/CSV_Generados")
+        ruta_carpeta.mkdir(parents=True, exist_ok=True)
+
+        ruta_archivo = ruta_carpeta / nombre_archivo
+
+        with open(ruta_archivo, "w", encoding="utf-8", newline='') as f:
             f.write(f"Turnos de {turnos[0].persona.nombre}: DNI {turnos[0].persona.dni}\n")
             df.to_csv(f, index=False)
 
         # Retornar archivo como descarga
         return FileResponse(
-            nombre_archivo,
+            ruta_archivo,
             media_type="text/csv",
             filename=f"turnos_{dni}.csv"
         )
