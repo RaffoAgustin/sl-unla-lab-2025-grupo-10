@@ -8,6 +8,7 @@ from fastapi.responses import FileResponse
 from DataBase.database import get_db
 from DataBase.models import Turno
 from Utils.config import ESTADOS_TURNO, MESES
+from pathlib import Path
 
 router = APIRouter()
 
@@ -38,16 +39,22 @@ def exportar_turnos_cancelados_mes_actual_csv(db: Session = Depends(get_db)):
 
         df = pd.DataFrame(filas)
 
-        archivo = f"turnos_cancelados_{hoy.year}_{hoy.month}.csv"
+        nombre_archivo = f"turnos_cancelados_{hoy.year}_{hoy.month}.csv"
 
-        with open(archivo, "w", encoding="utf-8", newline="") as f:
+        ruta_carpeta = Path("Reportes/CSV_Generados")
+        ruta_carpeta.mkdir(parents=True, exist_ok=True)
+
+        ruta_archivo = ruta_carpeta / nombre_archivo
+
+
+        with open(ruta_archivo, "w", encoding="utf-8", newline="") as f:
             f.write(f"Turnos cancelados - {MESES[hoy.month - 1]} {hoy.year}\n")
             df.to_csv(f, index=False)
 
         return FileResponse(
-            archivo,
+            ruta_archivo,
             media_type="text/csv",
-            filename=archivo
+            filename=nombre_archivo
         )
 
     except Exception as e:
