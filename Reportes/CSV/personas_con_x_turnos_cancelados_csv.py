@@ -34,6 +34,9 @@ def exportar_personas_con_turnos_cancelados_csv(
                 .all() #Muestro todas las personas con estas condiciones
             )
 
+        if not personas:
+            return {"mensaje": f"No se encontraron personas con mas de {min} turnos cancelados"}
+        
         filas = []
 
         for p in personas:

@@ -45,6 +45,10 @@ def exportar_personas_con_turnos_cancelados_pdf(
                 .all() #Muestro todas las personas con estas condiciones
             )
 
+        if not personas:
+            return {"mensaje": f"No se encontraron personas con mas de {min} turnos cancelados"}
+        
+        
         #Por cada registro de personas que cumplan las condiciones, agrego un parrafo.
         for p in personas:
             texto = (
