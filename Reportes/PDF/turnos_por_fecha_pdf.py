@@ -35,45 +35,45 @@ def exportar_turnos_de_una_fecha_csv(fecha: str, db: Session = Depends(get_db)):
                 "Turnos": [] 
                 }
                 
-                # Agregamos el turno a la lista de esa persona
-                personas_dict[dni]["Turnos"].append(
+            # Agregamos el turno a la lista de esa persona
+            personas_dict[dni]["Turnos"].append(
                 {"ID":t.id,
-                "Hora": t.hora.strftime("%H:%M"),
-                "Estado": t.estado })
+                 "Hora": t.hora.strftime("%H:%M"),
+                 "Estado": t.estado })
                 
-            # Crear carpeta si no existe
-            pdf_path = Path(f"Reportes/PDF_Generados/turnos_por_fecha{fecha_formateada}.pdf")
-            pdf_path.parent.mkdir(parents=True, exist_ok=True)
+        # Crear carpeta si no existe
+        pdf_path = Path(f"Reportes/PDF_Generados/turnos_por_fecha{fecha_formateada}.pdf")
+        pdf_path.parent.mkdir(parents=True, exist_ok=True)
 
-            # Crear PDF
-            doc = Document()
-            page = Page()
-            doc.append_page(page)
-            layout = SingleColumnLayout(page)
+        # Crear PDF
+        doc = Document()
+        page = Page()
+        doc.append_page(page)
+        layout = SingleColumnLayout(page)
 
-            # Título
-            layout.append_layout_element(Paragraph(f"Turnos en la fecha {fecha_formateada}"))
+        # Título
+        layout.append_layout_element(Paragraph(f"Turnos en la fecha {fecha_formateada}"))
             
-            # Agregar cada turno como párrafo
-            for persona in personas_dict.values():
-                for turno in persona["Turnos"]:
-                    texto = (
-                        f"Nombre: {persona['Nombre']}, "
-                        f"DNI: {persona['DNI']}, "
-                        f"ID Turno: {turno['ID']}, "
-                        f"Hora: {turno['Hora']}, "
-                        f"Estado: {turno['Estado']}")
+        # Agregar cada turno como párrafo
+        for persona in personas_dict.values():
+            for turno in persona["Turnos"]:
+                texto = (
+                    f"Nombre: {persona['Nombre']}, "
+                    f"DNI: {persona['DNI']}, "
+                    f"ID Turno: {turno['ID']}, "
+                    f"Hora: {turno['Hora']}, "
+                    f"Estado: {turno['Estado']}")
             
-                    layout.append_layout_element(Paragraph(texto))
+                layout.append_layout_element(Paragraph(texto))
 
-            # Guardar PDF
-            PDF.write(what=doc, where_to=str(pdf_path))
+        # Guardar PDF
+        PDF.write(what=doc, where_to=str(pdf_path))
 
-            # Devolver PDF
-            return FileResponse(
-                path=str(pdf_path),
-                media_type="application/pdf",
-                filename=pdf_path.name
+        # Devolver PDF
+        return FileResponse(
+            path=str(pdf_path),
+            media_type="application/pdf",
+            filename=pdf_path.name
             )
     
     except Exception as e: raise HTTPException(status_code=500, detail=f"Error al obtener los turnos de la fecha {fecha}: {str(e)}")

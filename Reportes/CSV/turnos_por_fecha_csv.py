@@ -34,25 +34,24 @@ def exportar_turnos_de_una_fecha_csv(fecha: str, db: Session = Depends(get_db)):
                 "Turnos": [] 
                 }
                 
-                # Agregamos el turno a la lista de esa persona
-                personas_dict[dni]["Turnos"].append(
+            # Agregamos el turno a la lista de esa persona
+            personas_dict[dni]["Turnos"].append(
                 {"ID":t.id,
-                "Hora": t.hora.strftime("%H:%M"),
-                "Estado": t.estado })
+                 "Hora": t.hora.strftime("%H:%M"),
+                 "Estado": t.estado })
                 
-                # Aplanar estructura: una fila por turno
-                filas = []
-                for persona in personas_dict.values():
-                    for turno in persona["Turnos"]:
-                        filas.append({
-                            "Nombre": persona["Nombre"],
-                            "DNI": persona["DNI"],
-                            "ID Turno": turno["ID"],
-                            "Hora": turno["Hora"],
-                            "Estado": turno["Estado"]
-                        })
+        # Aplanar estructura: una fila por turno
+        filas = []
+        for persona in personas_dict.values():
+            for turno in persona["Turnos"]:
+                filas.append({
+                    "Nombre": persona["Nombre"],
+                    "DNI": persona["DNI"],
+                    "ID Turno": turno["ID"],
+                    "Hora": turno["Hora"],
+                    "Estado": turno["Estado"]})
                 
-                # Crear DataFrame con formato tabular limpio
+        # Crear DataFrame con formato tabular limpio
         df = pd.DataFrame(filas)
         
         # Escribir CSV con título en la primera línea
