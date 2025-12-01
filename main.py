@@ -29,6 +29,7 @@ from Reportes.CSV.turnos_por_fecha_csv import router as turnosPorFechaCsv
 from Reportes.CSV.turnos_Cancelados_Mes_Actual_csv import router as turnosCanceladosMesActualCsv
 from Reportes.CSV.estado_Personas_Habilitadas_csv import router as estadoPersonasHabilitadasCsv
 from Reportes.CSV.turnos_confirmados_periodo_csv import router as turnosConfirmadosPeriodoCsv
+from Reportes.CSV.personas_con_x_turnos_cancelados_csv import router as personasConXTurnosCanceladosCsv
 
 from Reportes.PDF.turnos_Cancelados_Mes_Actual_pdf import router as turnosCanceladosMesActualPdf
 from Reportes.PDF.estado_Personas_Habilitadas_pdf import router as estadoPersonasHabilitadasPdf
@@ -81,6 +82,7 @@ app.include_router(turnosPorFechaCsv, prefix="/reportes", tags=["Turnos Por Fech
 app.include_router(turnosCanceladosMesActualCsv, prefix="/reportes", tags=["Turnos Cancelados Mes Actual CSV"])
 app.include_router(estadoPersonasHabilitadasCsv, prefix="/reportes", tags=["Estado Personas Habilitadas CSV"])
 app.include_router(turnosConfirmadosPeriodoCsv, prefix="/reportes", tags=["Turnos confirmados periodo en CSV"])
+app.include_router(personasConXTurnosCanceladosCsv, prefix="/reportes", tags=["Personas con x turnos cancelados en CSV"])
 
 app.include_router(turnosCanceladosMesActualPdf, prefix="/reportes", tags=["Turnos Cancelados Mes Actual PDF"])
 app.include_router(estadoPersonasHabilitadasPdf, prefix="/reportes", tags=["Estado Personas Habilitadas PDF"])
