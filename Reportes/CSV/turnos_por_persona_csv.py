@@ -4,8 +4,8 @@ from DataBase.models import Turno, Persona
 from DataBase.database import get_db
 from Utils.utils import validar_dni
 import pandas as pd
-from fastapi.responses import FileResponse
-from pathlib import Path
+from io import StringIO
+from fastapi.responses import StreamingResponse
 
 router = APIRouter()
 
@@ -27,7 +27,10 @@ def exportar_turnos_por_persona_csv(
             return {"mensaje": f"No se encontraron turnos para la persona con DNI = {dni}"}
 
         # Crear lista tabular de turnos
+        nombre_persona = turnos[0].persona.nombre
+
         filas = []
+        
         for t in turnos:
             filas.append({
                 "ID Turno": t.id,
@@ -36,26 +39,18 @@ def exportar_turnos_por_persona_csv(
                 "Estado": t.estado
             })
 
-        # Crear DataFrame
+        # Crear DataFrame con formato tabular limpio
         df = pd.DataFrame(filas)
-
-        # Guardar CSV con título
-        nombre_archivo = f"turnos_{dni}.csv"
-
-        ruta_carpeta = Path("Reportes/CSV_Generados")
-        ruta_carpeta.mkdir(parents=True, exist_ok=True)
-
-        ruta_archivo = ruta_carpeta / nombre_archivo
-
-        with open(ruta_archivo, "w", encoding="utf-8", newline='') as f:
-            f.write(f"Turnos de {turnos[0].persona.nombre}: DNI {turnos[0].persona.dni}\n")
-            df.to_csv(f, index=False)
-
-        # Retornar archivo como descarga
-        return FileResponse(
-            ruta_archivo,
+        
+        buffer = StringIO()
+        buffer.write(f"Nombre: {nombre_persona}\n")
+        df.to_csv(buffer, index=False, sep=";", encoding="utf-8-sig")
+        buffer.seek(0)
+        
+        return StreamingResponse(
+            buffer,
             media_type="text/csv",
-            filename=f"turnos_{dni}.csv"
+            headers={"Content-Disposition": f"attachment; filename=turnos_{nombre_persona}.csv"}
         )
 
     except Exception as e:

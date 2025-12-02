@@ -3,10 +3,13 @@ from sqlalchemy.orm import Session
 from DataBase.models import Turno, Persona
 from DataBase.database import get_db
 from Utils.utils import validar_dni
-import pandas as pd
-from fastapi.responses import FileResponse
-from pathlib import Path
-from borb.pdf import Document, Page, SingleColumnLayout, Paragraph, PDF
+from fastapi.responses import StreamingResponse
+
+from borb.pdf import Document, Page, SingleColumnLayout, Paragraph, PDF, FixedColumnWidthTable as Table
+from borb.pdf.canvas.color.color import HexColor
+from borb.pdf.canvas.layout.layout_element import Alignment
+from decimal import Decimal
+from io import BytesIO
 
 router = APIRouter()
 
@@ -22,45 +25,65 @@ def exportar_turnos_por_persona_csv(
             Turno.persona_id == Persona.id,
             Persona.dni == dni
         ).all()
-
-        # Si esa persona no tiene turnos:
-        if not turnos:
-            return {"mensaje": f"No se encontraron turnos para la persona con DNI = {dni}"}
-        
-        # Crear carpeta si no existe
-        pdf_path = Path(f"Reportes/PDF_Generados/turnos_por_persona{turnos[0].persona.nombre}.pdf")
-        pdf_path.parent.mkdir(parents=True, exist_ok=True)
-
+                
         # Crear PDF
         doc = Document()
         page = Page()
-        doc.append_page(page)
+        doc.add_page(page)
         layout = SingleColumnLayout(page)
-
-        # Título
-        layout.append_layout_element(Paragraph(f"Turnos de la persona {turnos[0].persona.nombre}"))
-
-        # Agregar cada turno como párrafo
-        for t in turnos:
-            texto = (
-                f"ID Turno: {t.id}, "
-                f"Fecha: {t.fecha.strftime("%d/%m/%Y")}, "
-                f"Hora: {t.hora.strftime("%H:%M")}, "
-                f"Estado: {t.estado}")
-            
-            layout.append_layout_element(Paragraph(texto))
         
-        # Guardar PDF
-        PDF.write(what=doc, where_to=str(pdf_path))
+        # Título
+        layout.add(
+            Paragraph(
+                "Reporte de Turnos por Persona",
+                font="Helvetica-Bold",
+                font_size=20,
+                font_color=HexColor("#000000"),
+                horizontal_alignment = Alignment.CENTERED))
+        
+        
+        layout.add(Paragraph(f"Usuario: {turnos[0].persona.nombre}", font_size=Decimal(13)))
+        # layout.add(Paragraph(" "))
+        
+        if turnos:
+            # Tabla
+            tabla = Table(number_of_rows=len(turnos) + 1, number_of_columns=4)
 
-        # Devolver PDF
-        return FileResponse(
-            path=str(pdf_path),
+            # Encabezados
+            black = HexColor("#000000")
+                
+            # Encabezados
+            tabla.add(Paragraph("ID", font="Helvetica-Bold", font_color=black, horizontal_alignment = Alignment.CENTERED))
+            tabla.add(Paragraph("Fecha", font="Helvetica-Bold", font_color=black, horizontal_alignment = Alignment.CENTERED))
+            tabla.add(Paragraph("Hora", font="Helvetica-Bold", font_color=black, horizontal_alignment = Alignment.CENTERED))
+            tabla.add(Paragraph("Estado", font="Helvetica-Bold", font_color=black, horizontal_alignment = Alignment.CENTERED))
+            
+            # Filas
+            for t in turnos:
+                fecha = t.fecha.strftime("%d/%m/%Y")
+                hora = t.hora.strftime("%H:%M") if t.hora else "—"
+                estado = t.estado if t.estado else "—"
+
+                tabla.add(Paragraph(str(t.id), horizontal_alignment = Alignment.CENTERED))
+                tabla.add(Paragraph(fecha, horizontal_alignment = Alignment.CENTERED))
+                tabla.add(Paragraph(hora, horizontal_alignment = Alignment.CENTERED))
+                tabla.add(Paragraph(estado, horizontal_alignment = Alignment.CENTERED))
+
+            layout.add(tabla)
+                
+        else:
+            # Si esa persona no tiene turnos
+            return {"mensaje": f"La persona con DNI {dni} no tiene turnos asignados"}
+        
+        # Generar PDF en memoria
+        buffer = BytesIO()
+        PDF.dumps(buffer, doc)
+        buffer.seek(0)
+        
+        return StreamingResponse(
+            buffer,
             media_type="application/pdf",
-            filename=pdf_path.name)
-
-    except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail=f"Error al obtener los turnos de la persona con DNI = {dni}: {str(e)}"
+            headers={"Content-Disposition": f"attachment; filename=turnos_{turnos[0].persona.nombre}.pdf"}
         )
+    
+    except Exception as e: raise HTTPException(status_code=500, detail=f"Error al obtener los turnos de la persona con DNI {dni}: {str(e)}")

@@ -4,8 +4,8 @@ from DataBase.models import Turno, Persona
 from DataBase.database import get_db
 from Utils.utils import validar_y_formatear_fecha_especial
 import pandas as pd
-from fastapi.responses import FileResponse
-from pathlib import Path
+from io import StringIO
+from fastapi.responses import StreamingResponse
 
 router = APIRouter()
 
@@ -54,23 +54,14 @@ def exportar_turnos_de_una_fecha_csv(fecha: str, db: Session = Depends(get_db)):
         # Crear DataFrame con formato tabular limpio
         df = pd.DataFrame(filas)
         
-        # Escribir CSV con título en la primera línea
-        nombre_archivo = "turnos_por_fecha.csv"
-
-        ruta_carpeta = Path("Reportes/CSV_Generados")
-        ruta_carpeta.mkdir(parents=True, exist_ok=True)
-
-        ruta_archivo = ruta_carpeta / nombre_archivo
-
-        with open(ruta_archivo, "w", encoding="utf-8", newline='') as f:
-            f.write(f"Turnos para la fecha {fecha_formateada}\n")  # <-- Título
-            df.to_csv(f, index=False)
-                    
-        # Retornar el archivo como descarga
-        return FileResponse(
-            ruta_archivo,
+        buffer = StringIO()
+        df.to_csv(buffer, index=False, sep=";", encoding="utf-8-sig")
+        buffer.seek(0)
+        
+        return StreamingResponse(
+            buffer,
             media_type="text/csv",
-            filename=f"turnos_{fecha_formateada}.csv"
+            headers={"Content-Disposition": f"attachment; filename=turnos_{fecha_formateada}.csv"}
         )
-    
+        
     except Exception as e: raise HTTPException(status_code=500, detail=f"Error al obtener los turnos de la fecha {fecha}: {str(e)}")
