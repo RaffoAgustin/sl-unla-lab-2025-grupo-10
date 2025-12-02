@@ -4,12 +4,10 @@ from sqlalchemy.orm import Session
 from Utils.config import ESTADOS_TURNO
 from DataBase.models import Turno, Persona
 from DataBase.database import get_db
-from pathlib import Path
-from fastapi.responses import FileResponse
 from Utils.utils import calcular_edad
-from pathlib import Path
-from fastapi.responses import FileResponse
 import pandas as pd
+from io import StringIO
+from fastapi.responses import StreamingResponse
 
 router = APIRouter()
 
@@ -51,24 +49,17 @@ def exportar_personas_con_turnos_cancelados_csv(
                 "Habilitada": p.esta_habilitado
             })
 
+        # Crear DataFrame con formato tabular limpio
         df = pd.DataFrame(filas)
-
-        nombre_archivo = f"turnos_cancelados_min_{min}.csv"
-    
-        # Carpeta de salida
-        ruta_carpeta = Path("Reportes/CSV_Generados")
-        ruta_carpeta.mkdir(parents=True, exist_ok=True)
-
-        ruta_archivo = ruta_carpeta / nombre_archivo
-
-        with open(ruta_archivo, "w", encoding="utf-8", newline='') as f:
-            f.write(f"Personas con {min} turno/s cancelados o más\n")
-            df.to_csv(f, index=False)
-
-        return FileResponse(
-            ruta_archivo,
+        
+        buffer = StringIO()
+        df.to_csv(buffer, index=False, sep=";", encoding="utf-8-sig")
+        buffer.seek(0)
+        
+        return StreamingResponse(
+            buffer,
             media_type="text/csv",
-            filename=nombre_archivo
+            headers={"Content-Disposition": f"attachment; filename=turnos_cancelados_min_{min}.csv"}
         )
     
     except Exception as e:

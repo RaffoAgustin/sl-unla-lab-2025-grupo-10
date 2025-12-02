@@ -70,7 +70,6 @@ def exportar_turnos_de_una_fecha_csv(fecha: str, db: Session = Depends(get_db)):
                 
         else:
             # Si no hay turnos en esa fecha
-            layout.add(Paragraph(f"No se encontraron turnos para la fecha {fecha_formateada}"))
             return {"mensaje": f"No se encontraron turnos para la fecha {fecha_formateada}"}
         
         # Generar PDF en memoria

@@ -2,13 +2,13 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import extract
 from datetime import date
-import pandas as pd
-from fastapi.responses import FileResponse
-
 from DataBase.database import get_db
 from DataBase.models import Turno
 from Utils.config import ESTADOS_TURNO, MESES
-from pathlib import Path
+
+import pandas as pd
+from io import StringIO
+from fastapi.responses import StreamingResponse
 
 router = APIRouter()
 
@@ -36,25 +36,18 @@ def exportar_turnos_cancelados_mes_actual_csv(db: Session = Depends(get_db)):
                 "Hora": str(t.hora),
                 "Estado": t.estado
             })
-
+        
+        # Crear DataFrame con formato tabular limpio
         df = pd.DataFrame(filas)
-
-        nombre_archivo = f"turnos_cancelados_{hoy.year}_{hoy.month}.csv"
-
-        ruta_carpeta = Path("Reportes/CSV_Generados")
-        ruta_carpeta.mkdir(parents=True, exist_ok=True)
-
-        ruta_archivo = ruta_carpeta / nombre_archivo
-
-
-        with open(ruta_archivo, "w", encoding="utf-8", newline="") as f:
-            f.write(f"Turnos cancelados - {MESES[hoy.month - 1]} {hoy.year}\n")
-            df.to_csv(f, index=False)
-
-        return FileResponse(
-            ruta_archivo,
+        
+        buffer = StringIO()
+        df.to_csv(buffer, index=False, sep=";", encoding="utf-8-sig")
+        buffer.seek(0)
+        
+        return StreamingResponse(
+            buffer,
             media_type="text/csv",
-            filename=nombre_archivo
+            headers={"Content-Disposition": f"attachment; filename=turnos_cancelados_{hoy.year}_{hoy.month}.csv"}
         )
 
     except Exception as e:

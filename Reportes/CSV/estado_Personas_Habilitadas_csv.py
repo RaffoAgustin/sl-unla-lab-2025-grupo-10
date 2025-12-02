@@ -1,12 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
-from fastapi.responses import FileResponse
-import pandas as pd
 
 from DataBase.database import get_db
 from DataBase.models import Persona
 from Utils.utils import calcular_edad
-from pathlib import Path
+import pandas as pd
+from io import StringIO
+from fastapi.responses import StreamingResponse
 
 router = APIRouter()
 
@@ -37,24 +37,17 @@ def exportar_estado_personas_csv(
                 "Habilitada": p.esta_habilitado
             })
 
+        # Crear DataFrame con formato tabular limpio
         df = pd.DataFrame(filas)
-
-        nombre_archivo = "estado_personas.csv"
-
-        ruta_carpeta = Path("Reportes/CSV_Generados")
-        ruta_carpeta.mkdir(parents=True, exist_ok=True)
-
-        ruta_archivo = ruta_carpeta / nombre_archivo
-
-        with open(ruta_archivo, "w", encoding="utf-8", newline='') as f:
-            titulo = f"Personas con habilitada={habilitada}\n"
-            f.write(titulo)
-            df.to_csv(f, index=False)
-
-        return FileResponse(
-            ruta_archivo,
+        
+        buffer = StringIO()
+        df.to_csv(buffer, index=False, sep=";", encoding="utf-8-sig")
+        buffer.seek(0)
+        
+        return StreamingResponse(
+            buffer,
             media_type="text/csv",
-            filename=f"estado_personas_{habilitada}.csv"
+            headers={"Content-Disposition": f"attachment; filename=estado_personas_{habilitada}.csv"}
         )
 
     except Exception as e:

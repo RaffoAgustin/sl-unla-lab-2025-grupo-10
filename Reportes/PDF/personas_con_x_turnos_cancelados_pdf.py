@@ -4,10 +4,13 @@ from sqlalchemy.orm import Session
 from Utils.config import ESTADOS_TURNO
 from DataBase.models import Turno, Persona
 from DataBase.database import get_db
-from borb.pdf import Document, Page, SingleColumnLayout, Paragraph, PDF
-from pathlib import Path
-from fastapi.responses import FileResponse
 from Utils.utils import calcular_edad
+from fastapi.responses import StreamingResponse
+from borb.pdf import Document, Page, SingleColumnLayout, Paragraph, PDF, FixedColumnWidthTable as Table
+from borb.pdf.canvas.color.color import HexColor
+from borb.pdf.canvas.layout.layout_element import Alignment
+from decimal import Decimal
+from io import BytesIO
 
 router = APIRouter()
 
@@ -23,18 +26,20 @@ def exportar_personas_con_turnos_cancelados_pdf(
                 detail="El valor minimo no puede ser negativo o 0"
         )
 
-        # Crear carpeta si no existe
-        pdf_path = Path(f"Reportes/PDF_Generados/turnos_cancelados_min_{min}.pdf")
-        pdf_path.parent.mkdir(parents=True, exist_ok=True)
-
         # Crear PDF
         doc = Document()
         page = Page()
-        doc.append_page(page)
+        doc.add_page(page)
         layout = SingleColumnLayout(page)
-
+        
         # Título
-        layout.append_layout_element(Paragraph(f"Personas con {min} turno/s cancelados o más"))
+        layout.add(
+            Paragraph(
+                f"Reporte de Turnos Cancelados con un mínimo de {min}",
+                font="Helvetica-Bold",
+                font_size=20,
+                font_color=HexColor("#000000"),
+                horizontal_alignment = Alignment.CENTERED))
         
         personas=(
                 db.query(Persona) #Hace una consulta de personas
@@ -45,29 +50,74 @@ def exportar_personas_con_turnos_cancelados_pdf(
                 .all() #Muestro todas las personas con estas condiciones
             )
 
-        if not personas:
+        if personas:
+            # Tabla
+            tabla = Table(
+                number_of_rows=len(personas) + 1,
+                number_of_columns=8,
+                column_widths=[
+                    Decimal(40),  # ID
+                    Decimal(70), # Nombre
+                    Decimal(200), # Email
+                    Decimal(90),  # DNI
+                    Decimal(110),  # Teléfono
+                    Decimal(100), # Fecha nacimiento
+                    Decimal(55),  # Edad
+                    Decimal(85),  # Habilitada
+                ])
+
+            # Encabezados
+            black = HexColor("#000000")
+                
+            # Encabezados
+            tabla.add(Paragraph("ID", font="Helvetica-Bold", font_color=black, horizontal_alignment = Alignment.CENTERED))
+            tabla.add(Paragraph("Nombre", font="Helvetica-Bold", font_color=black, horizontal_alignment = Alignment.CENTERED))
+            tabla.add(Paragraph("Email", font="Helvetica-Bold", font_color=black, horizontal_alignment = Alignment.CENTERED))
+            tabla.add(Paragraph("DNI", font="Helvetica-Bold", font_color=black, horizontal_alignment = Alignment.CENTERED))
+            tabla.add(Paragraph("Teléfono", font="Helvetica-Bold", font_color=black, horizontal_alignment = Alignment.CENTERED))
+            tabla.add(Paragraph("Fecha de nacimiento", font="Helvetica-Bold", font_color=black, horizontal_alignment = Alignment.CENTERED))
+            tabla.add(Paragraph("Edad", font="Helvetica-Bold", font_color=black, horizontal_alignment = Alignment.CENTERED))
+            tabla.add(Paragraph("Habilitada", font="Helvetica-Bold", font_color=black, horizontal_alignment = Alignment.CENTERED))
+
+            # Filas
+            for p in personas:
+                nombre = p.nombre if p.nombre else "Sin nombre"
+                email = p.email if p.email else "-"
+                dni = p.dni if p.dni else "-"
+                telefono = p.telefono if p.telefono else "-"
+                fecha_nacimiento = (
+                    p.fecha_nacimiento.strftime("%d/%m/%Y")
+                    if p.fecha_nacimiento 
+                    else "-")
+                edad = calcular_edad(p.fecha_nacimiento) if p.fecha_nacimiento else "-"
+                edad = str(edad)
+                habilitado = "Sí" if p.esta_habilitado else "No"
+
+                tabla.add(Paragraph(str(p.id), horizontal_alignment = Alignment.CENTERED))
+                tabla.add(Paragraph(nombre, horizontal_alignment = Alignment.CENTERED))
+                tabla.add(Paragraph(email, horizontal_alignment = Alignment.CENTERED))
+                tabla.add(Paragraph(dni, horizontal_alignment = Alignment.CENTERED))
+                tabla.add(Paragraph(telefono , horizontal_alignment = Alignment.CENTERED))
+                tabla.add(Paragraph(fecha_nacimiento , horizontal_alignment = Alignment.CENTERED))
+                tabla.add(Paragraph(edad , horizontal_alignment = Alignment.CENTERED))
+                tabla.add(Paragraph(habilitado , horizontal_alignment = Alignment.CENTERED))
+
+            layout.add(tabla)
+            
+        else:
             return {"mensaje": f"No se encontraron personas con mas de {min} turnos cancelados"}
         
+        # Generar PDF en memoria
+        buffer = BytesIO()
+        PDF.dumps(buffer, doc)
+        buffer.seek(0)
         
-        #Por cada registro de personas que cumplan las condiciones, agrego un parrafo.
-        for p in personas:
-            texto = (
-                f"ID: {p.id}, Nombre: {p.nombre}, Email: {p.email}, "
-                f"DNI: {p.dni}, Teléfono: {p.telefono}, Fecha nacimiento: {p.fecha_nacimiento}, "
-                f"Edad: {calcular_edad(p.fecha_nacimiento)}, Habilitada: {p.esta_habilitado}"
-            )
-            layout.append_layout_element(Paragraph(texto))
-
-        # Guardar PDF
-        PDF.write(what=doc, where_to=str(pdf_path))
-
-        # Devolver PDF
-        return FileResponse(
-            path=str(pdf_path),
+        return StreamingResponse(
+            buffer,
             media_type="application/pdf",
-            filename=pdf_path.name
+            headers={"Content-Disposition": f"attachment; filename=turnos_cancelados_min_{min}.pdf"}
         )
-    
+            
     except Exception as e:
         print("Error en el reporte de turnos cancelados:", e)
         raise HTTPException(
