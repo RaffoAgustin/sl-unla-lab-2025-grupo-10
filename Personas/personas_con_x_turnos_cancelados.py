@@ -22,7 +22,7 @@ def personas_con_turnos_cancelados(
         personas=(
                 db.query(Persona) #Hace una consulta de personas
                 .join(Turno) #Junto a sus turnos
-                .filter(Turno.estado == ESTADOS_TURNO[1]) #Tomo unicamente a los turnos cancelados
+                .filter(Turno.estado == ESTADOS_TURNO.Cancelado) #Tomo unicamente a los turnos cancelados
                 .group_by(Persona.id) #Agrupo a las personas según su id, necesario para que las func funcionen correctamente
                 .having(func.count(Turno.id) >= min) #Filtro los grupos (cada persona) donde la cantidad de turnos (ya filtrados) sean mayores al minimo
                 .all() #Muestro todas las personas con estas condiciones

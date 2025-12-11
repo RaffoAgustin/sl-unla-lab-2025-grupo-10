@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 from datetime import time
+from enum import Enum
 
 # Esta línea lee el archivo .env y carga sus variables en el entorno
 load_dotenv("Utils/variables.env")
@@ -9,9 +10,15 @@ load_dotenv("Utils/variables.env")
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 # Leer la variable ESTADOS_TURNO
-estados_strings = os.getenv("ESTADOS_TURNO")
-# Se crea la lista, si no hay, por seguridad se crea vacia
-ESTADOS_TURNO = estados_strings.split(',') if estados_strings else []
+estados_strings = os.getenv("ESTADOS_TURNO", "") #Obtiene la variable de ESTADOS_TURNO como un string, o vacio si no lo obtiene
+values = [v for v in estados_strings.split(",") if v] #Divido el string en comas ["Pendiente", "Cancelado", ...]
+
+if not values: #Validación por seguridad
+    raise ValueError("La variable ESTADOS_TURNO está vacía o mal definida")
+
+ESTADOS_TURNO = Enum("ESTADOS_TURNO",  # Nombre interno del Enum
+                    {v: v for v in values}, # Diccionario {clave: valor}, el valor es igual a la clave en este caso
+                    type=str)  # Hace que cada miembro sea un str real
 
 # Inicializar lista de horarios válidos
 HORARIOS_VALIDOS = []

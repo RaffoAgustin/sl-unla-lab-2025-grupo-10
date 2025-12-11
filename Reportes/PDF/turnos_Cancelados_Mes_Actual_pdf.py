@@ -21,7 +21,7 @@ def exportar_turnos_cancelados_mes_actual_pdf(db: Session = Depends(get_db)):
 
         # Obtener turnos cancelados del mes actual
         turnos = db.query(Turno).filter(
-            Turno.estado == ESTADOS_TURNO[1],
+            Turno.estado == ESTADOS_TURNO.Cancelado,
             extract('year', Turno.fecha) == hoy.year,
             extract('month', Turno.fecha) == hoy.month
         ).all()

@@ -16,10 +16,10 @@ def turnos_cancelados_mes_actual(db: Session = Depends(get_db)):
     try:
         hoy = date.today()
 
-        print("Valor usado para filtrar:", repr(ESTADOS_TURNO[1]))
+        print("Valor usado para filtrar:", repr(ESTADOS_TURNO.Cancelado.value))
 
         turnos = db.query(Turno).filter(
-            Turno.estado == ESTADOS_TURNO[1],
+            Turno.estado == ESTADOS_TURNO.Cancelado,
             extract('year', Turno.fecha) == hoy.year,
             extract('month', Turno.fecha) == hoy.month
         ).all()

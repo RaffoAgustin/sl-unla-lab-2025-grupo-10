@@ -20,7 +20,7 @@ def turnos_disponibles(fecha: str, db: Session = Depends(get_db)):
         # Excluyo turnos cancelados o sin persona asignada (disponibles)
         turnos_ocupados = (db.query(Turno).filter(
             Turno.fecha == fecha_formateada,
-            Turno.estado != ESTADOS_TURNO[1],  # No "Cancelado"
+            Turno.estado != ESTADOS_TURNO.Cancelado,  # No "Cancelado"
             Turno.persona_id.is_not(None)  # Solo turnos con persona asignada
         ).all())
 
