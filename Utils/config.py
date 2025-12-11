@@ -2,6 +2,9 @@ import os
 from dotenv import load_dotenv
 from datetime import time
 from enum import Enum
+import json
+from dotenv import load_dotenv
+from decimal import Decimal
 
 # Esta línea lee el archivo .env y carga sus variables en el entorno
 load_dotenv("Utils/variables.env")
@@ -50,3 +53,26 @@ MAX_CANCELADOS = int(max_cancelados_str) if max_cancelados_str else 5
 # Leer la variable CANT_ELEMENTOS_X_PAGINA
 cant_elementos_x_pagina_str = os.getenv("CANT_ELEMENTOS_X_PAGINA")
 CANT_ELEMENTOS_X_PAGINA = int(cant_elementos_x_pagina_str) if cant_elementos_x_pagina_str else 5
+
+#Leer variables de configuración de PDF
+
+load_dotenv()  # carga el .env automáticamente
+
+def load_pdf_config(env_name: str):
+    raw = os.getenv(env_name)
+    if not raw:
+        raise ValueError(f"Variable de entorno {env_name} no encontrada")
+
+    config = json.loads(raw)
+
+    # Convertir campos necesarios a Decimal
+    config["page_width"] = Decimal(config["page_width"])
+    config["page_height"] = Decimal(config["page_height"])
+    config["column_widths"] = [Decimal(x) for x in config["column_widths"]]
+    config["max_rows"] = int(config["max_rows"])
+
+    return config
+
+# Creamos accesores simples:
+CONFIG_PDF_PERSONA = load_pdf_config("CONFIG_PDF_PERSONA")
+CONFIG_PDF_TURNOS = load_pdf_config("CONFIG_PDF_TURNOS")
