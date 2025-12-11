@@ -10,6 +10,7 @@ from borb.pdf.canvas.color.color import HexColor
 from borb.pdf.canvas.layout.layout_element import Alignment
 from decimal import Decimal
 from io import BytesIO
+from borb.pdf.page.page_size import PageSize
 
 router = APIRouter()
 
@@ -26,78 +27,87 @@ def exportar_estado_personas_pdf(
         
         # Crear PDF
         doc = Document()
-        page = Page()
-        doc.add_page(page)
-        layout = SingleColumnLayout(page)
-        
-        # Título
-        layout.add(
-            Paragraph(
-                "Reporte de Estado de Personas Habilitadas",
-                font="Helvetica-Bold",
-                font_size=20,
-                font_color=HexColor("#000000"),
-                horizontal_alignment = Alignment.CENTERED))
-        
-        layout.add(Paragraph(f"Habilitadas: {habilitada}", font_size=Decimal(13)))
-        # layout.add(Paragraph(" "))
         
         if personas:
-            # Tabla
-            tabla = Table(
-                number_of_rows=len(personas) + 1,
-                number_of_columns=8,
-                column_widths=[
-                    Decimal(40),  # ID
-                    Decimal(70), # Nombre
-                    Decimal(200), # Email
-                    Decimal(90),  # DNI
-                    Decimal(110),  # Teléfono
-                    Decimal(100), # Fecha nacimiento
-                    Decimal(55),  # Edad
-                    Decimal(85),  # Habilitada
-                ])
 
-            # Encabezados
-            black = HexColor("#000000")
+            # Dividir personas en grupos por página
+            max_personas_por_pagina = 20 #Variable de entorno por favor
+            total_paginas = (len(personas) + max_personas_por_pagina - 1) // max_personas_por_pagina #Division entera, no puede ser decimal
+            
+
+            for num_pagina in range(total_paginas): 
                 
-            # Encabezados
-            tabla.add(Paragraph("ID", font="Helvetica-Bold", font_color=black, horizontal_alignment = Alignment.CENTERED))
-            tabla.add(Paragraph("Nombre", font="Helvetica-Bold", font_color=black, horizontal_alignment = Alignment.CENTERED))
-            tabla.add(Paragraph("Email", font="Helvetica-Bold", font_color=black, horizontal_alignment = Alignment.CENTERED))
-            tabla.add(Paragraph("DNI", font="Helvetica-Bold", font_color=black, horizontal_alignment = Alignment.CENTERED))
-            tabla.add(Paragraph("Teléfono", font="Helvetica-Bold", font_color=black, horizontal_alignment = Alignment.CENTERED))
-            tabla.add(Paragraph("Fecha de nacimiento", font="Helvetica-Bold", font_color=black, horizontal_alignment = Alignment.CENTERED))
-            tabla.add(Paragraph("Edad", font="Helvetica-Bold", font_color=black, horizontal_alignment = Alignment.CENTERED))
-            tabla.add(Paragraph("Habilitada", font="Helvetica-Bold", font_color=black, horizontal_alignment = Alignment.CENTERED))
+                #Agregar una nueva página en cada iteración
+                page = Page(width=Decimal(850), height=Decimal(764))
+              #  page.set_page_size(PageSize.A4_LANDSCAPE) #Apaizar la pagina para que los registros no se
+                doc.add_page(page)
+                layout = SingleColumnLayout(page)
+                #Reducir márgenes de la página para ganar espacio en la tabla
+                layout.vertical_margin = Decimal(10)
+                layout.horizontal_margin = Decimal(10)
 
-            # Filas
-            for p in personas:
-                nombre = p.nombre if p.nombre else "Sin nombre"
-                email = p.email if p.email else "-"
-                dni = p.dni if p.dni else "-"
-                telefono = p.telefono if p.telefono else "-"
-                fecha_nacimiento = (
-                    p.fecha_nacimiento.strftime("%d/%m/%Y")
-                    if p.fecha_nacimiento 
-                    else "-")
-                edad = calcular_edad(p.fecha_nacimiento) if p.fecha_nacimiento else "-"
-                edad = str(edad)
-                habilitado = "Sí" if p.esta_habilitado else "No"
 
-                tabla.add(Paragraph(str(p.id), horizontal_alignment = Alignment.CENTERED))
-                tabla.add(Paragraph(nombre, horizontal_alignment = Alignment.CENTERED))
-                tabla.add(Paragraph(email, horizontal_alignment = Alignment.CENTERED))
-                tabla.add(Paragraph(dni, horizontal_alignment = Alignment.CENTERED))
-                tabla.add(Paragraph(telefono , horizontal_alignment = Alignment.CENTERED))
-                tabla.add(Paragraph(fecha_nacimiento , horizontal_alignment = Alignment.CENTERED))
-                tabla.add(Paragraph(edad , horizontal_alignment = Alignment.CENTERED))
-                tabla.add(Paragraph(habilitado , horizontal_alignment = Alignment.CENTERED))
+                # Título (Solamente en la primera página)
+                if num_pagina == 0:
+                    layout.add(
+                        Paragraph(
+                            f"Personas {"habilitadas" if habilitada else "deshabilitadas"} para sacar turno",
+                            font="Helvetica-Bold",
+                            font_size=20,
+                            font_color=HexColor("#000000"),
+                            horizontal_alignment = Alignment.CENTERED))
+                
+                #Calibra la variable "Personas_pagina_actual" para que tenga un valor de inicio y fin, cambiando en cada iteración del bucle
+                inicio = num_pagina * max_personas_por_pagina
+                fin = min(inicio + max_personas_por_pagina, len(personas)) #Elige entre limite de pagina o el total de personas
+                personas_pagina_actual = personas[inicio:fin]
 
-            layout.add(tabla)
+                # Tabla
+                tabla = Table(
+                    number_of_rows=len(personas_pagina_actual) + 1,
+                    number_of_columns=7,
+                    column_widths=[
+                        Decimal(30),  # ID
+                        Decimal(120), # Nombre
+                        Decimal(200), # Email
+                        Decimal(90),  # DNI
+                        Decimal(110),  # Teléfono
+                        Decimal(100), # Fecha nacimiento
+                        Decimal(55),  # Edad
+                #        Decimal(85),  # Habilitada
+                    ])
+
+                # Encabezados
+                headers = ["ID", "Nombre", "Email", "DNI", "Teléfono", "Fecha nacimiento", "Edad"]
+                for h in headers:
+                    tabla.add(Paragraph(h, font="Helvetica-Bold", horizontal_alignment=Alignment.CENTERED))
+                    
+                # Filas
+                for p in personas_pagina_actual:
+                    nombre = p.nombre if p.nombre else "Sin nombre"
+                    email = p.email if p.email else "-"
+                    dni = p.dni if p.dni else "-"
+                    telefono = p.telefono if p.telefono else "-"
+                    fecha_nacimiento = (
+                        p.fecha_nacimiento.strftime("%d/%m/%Y")
+                        if p.fecha_nacimiento 
+                        else "-")
+                    edad = str(calcular_edad(p.fecha_nacimiento)) if p.fecha_nacimiento else "-"
+                   # habilitado = "Sí" if p.esta_habilitado else "No"
+
+                    tabla.add(Paragraph(str(p.id), horizontal_alignment = Alignment.LEFT, respect_newlines_in_text=True))
+                    tabla.add(Paragraph(nombre, horizontal_alignment = Alignment.LEFT, respect_newlines_in_text=True))
+                    tabla.add(Paragraph(email, horizontal_alignment = Alignment.LEFT, respect_newlines_in_text=True))
+                    tabla.add(Paragraph(dni, horizontal_alignment = Alignment.LEFT, respect_newlines_in_text=True))
+                    tabla.add(Paragraph(telefono , horizontal_alignment = Alignment.LEFT, respect_newlines_in_text=True))
+                    tabla.add(Paragraph(fecha_nacimiento , horizontal_alignment = Alignment.LEFT, respect_newlines_in_text=True))
+                    tabla.add(Paragraph(edad , horizontal_alignment = Alignment.LEFT, respect_newlines_in_text=True))
+                   # tabla.add(Paragraph(habilitado , horizontal_alignment = Alignment.LEFT, respect_newlines_in_text=True))
+
+                layout.add(tabla)
         
         else:
-            return {"mensaje": f"No se encontraron personas con habilitada={habilitada}"}
+            return {"mensaje": f"No se encontraron personas {"habilitadas" if habilitada else "deshabilitadas"}"}
 
         # Generar PDF en memoria
         buffer = BytesIO()
