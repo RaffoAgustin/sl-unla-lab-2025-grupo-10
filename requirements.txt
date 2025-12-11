@@ -1,5 +1,5 @@
 fastapi[standard]
 sqlalchemy==2.0.43
 pandas==2.3.2
-borb==3.0.2
+borb==2.1.5
 python-dotenv==1.1.1 #Libreria para los archivos de variables de entorno globales
