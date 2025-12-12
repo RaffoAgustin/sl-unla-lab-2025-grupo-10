@@ -1,14 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
-from datetime import date
 from typing import Optional
 from Utils.config import ESTADOS_TURNO, CANT_ELEMENTOS_X_PAGINA
 from DataBase.models import Turno
 from DataBase.database import get_db
 from schemas import FechaQuery
-from pathlib import Path
-from fastapi.responses import FileResponse
 import pandas as pd
+from io import StringIO
+from fastapi.responses import StreamingResponse
 
 router = APIRouter()
 
@@ -16,11 +15,11 @@ router = APIRouter()
 def exportar_turnos_confirmados_periodo_csv(
     desde: str = Query(..., description="Fecha futura en formato DD-MM-YYYY"), #Consulta obligatoria de la fecha inicial (Recibo un string)
     hasta: Optional[str] = Query(None, description="Fecha futura en formato DD-MM-YYYY"),  #Consulta opcional de la fecha límite
-    #La paginación no es necesaria, supongo
+    pag: Optional[int] = Query(1, ge=1, description="Numero de pagina (minimo 1)"), #El predeterminado es 1 aunque no se ponga. ge=1 significa que debe ser mayor o igual a 1
     db: Session = Depends(get_db)  #Inyecta automáticamente una sesión de base de datos
 ):
     ## Ejemplo de Endpoint: 
-    ## /reportes/pdf/turnos-confirmados-periodo?desde=20-10-2025&hasta=30-12-2025
+    ## /reportes/csv/turnos-confirmados-periodo?desde=20-10-2025&hasta=30-12-2025&pag=2
 
     try:
         # Convierto el string "desde" a un objeto date a través de la clase FechaQuery y sus validaciones
@@ -50,51 +49,56 @@ def exportar_turnos_confirmados_periodo_csv(
             turnosConfirmados = turnosConfirmados.filter(Turno.fecha <= fecha_hasta) #...También filtro por las fechas más viejas que "hasta"
 
 
-        turnosListos = turnosConfirmados.all()
-
         #Si ningún registro cumple las condiciones, se lanza una excepción
-        if not turnosListos:
+        if not turnosConfirmados:
             raise HTTPException(
                     status_code=status.HTTP_404_NOT_FOUND,
                     detail="No se encontraron registros"
-                )
+                ) 
+        
+        paginaDeTurnos = (
+            turnosConfirmados
+            .order_by(Turno.fecha) #Ordeno por fecha de mas antiguo a más reciente
+            .offset(CANT_ELEMENTOS_X_PAGINA * (pag-1)) #Offset es la cantidad de elementos salteados antes de mostrar.
+            .limit(CANT_ELEMENTOS_X_PAGINA) #Limito la cantidad de registros por su variable
+            .all() #Muestra todos los registros bajo estos parámetros
+        )
+
+        if not paginaDeTurnos:
+            return {"mensaje":f"No hay registros en la página indicada (pag: {pag})"}
+    
         
         filas = []
 
-        for t in turnosListos:
+        for t in paginaDeTurnos:
             filas.append({
-                "ID": t.id,
-                "Persona ID": t.persona_id,
-                "Fecha": str(t.fecha),
-                "Hora": str(t.hora),
-                "Estado": t.estado
+                "ID Turno": t.id,
+                "ID Persona": t.persona_id,
+                "Fecha": t.fecha.strftime("%Y/%m/%d"),
+                "Hora": t.hora.strftime("%H:%M"),
             })
 
-        df = pd.DataFrame(filas)
 
-        nombre_archivo = f"turnos_confirmados_{desde}{'_'+ hasta if hasta else ''}.csv"
+        df = pd.DataFrame(filas)
 
         titulo = (
             f"Turnos confirmados desde {desde} hasta {hasta}"
             if hasta
             else f"Turnos confirmados desde {desde} (sin límite)"
         )
-    
-        # Carpeta de salida
-        ruta_carpeta = Path("Reportes/CSV_Generados")
-        ruta_carpeta.mkdir(parents=True, exist_ok=True)
 
-        ruta_archivo = ruta_carpeta / nombre_archivo
-
-        with open(ruta_archivo, "w", encoding="utf-8", newline='') as f:
-            f.write(f"{titulo}\n")
-            df.to_csv(f, index=False)
-
-        return FileResponse(
-            ruta_archivo,
+        buffer = StringIO()
+        buffer.write(f"{titulo}\n")
+        buffer.write(f"Pagina: {pag}\n")
+        df.to_csv(buffer, index=False, sep=";", encoding="utf-8-sig")
+        buffer.seek(0)
+        
+        return StreamingResponse(
+            buffer,
             media_type="text/csv",
-            filename=nombre_archivo
+            headers={"Content-Disposition": f"attachment; filename=turnos_confirmados_{desde}{'_'+ hasta if hasta else ''}.csv"}
         )
+
     
     except Exception as e:
         raise HTTPException(
