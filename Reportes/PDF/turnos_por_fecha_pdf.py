@@ -33,13 +33,15 @@ def exportar_turnos_de_una_fecha_csv(fecha: str, db: Session = Depends(get_db)):
    
         # Crear PDF
         doc = Document()
-        page = Page()
-        doc.add_page(page)
-        layout = SingleColumnLayout(page)
         
         #Bucle de páginas
         for num_pagina in range(total_paginas):               
             
+            #Agrego una nueva pagina en cada bucle
+            page = Page(width=cfg["page_width"], height=cfg["page_height"])
+            doc.add_page(page)
+            layout = SingleColumnLayout(page)
+
             # Título
             if num_pagina == 0:
                 layout.add(
