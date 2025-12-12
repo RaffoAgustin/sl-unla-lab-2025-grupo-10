@@ -57,7 +57,7 @@ def exportar_turnos_cancelados_mes_actual_pdf(db: Session = Depends(get_db)):
                         horizontal_alignment = Alignment.CENTERED))
             
 
-            #Calibra la variable "Personas_pagina_actual" para que tenga un valor de inicio y fin, cambiando en cada iteración del bucle
+            #Calibra la variable "Turnos_pagina_actual" para que tenga un valor de inicio y fin, cambiando en cada iteración del bucle
             inicio = num_pagina * max_turnos_por_pagina
             fin = min(inicio + max_turnos_por_pagina, len(turnos)) #Elige entre limite de pagina o el total de personas
             turnos_pagina_actual = turnos[inicio:fin]
@@ -65,12 +65,9 @@ def exportar_turnos_cancelados_mes_actual_pdf(db: Session = Depends(get_db)):
             
             # Tabla
             tabla = Table(
-                number_of_rows=len(turnos_pagina_actual) + 1,
-                number_of_columns=len(cfg["column_widths"]),
-                column_widths=cfg["column_widths"])
-
-            # Encabezados
-            black = HexColor("#000000")
+                number_of_rows=len(turnos_pagina_actual) + 1, #Numero de filas
+                number_of_columns=len(cfg["column_widths"]), #Numero de columnas (Sacado del env)
+                column_widths=cfg["column_widths"]) #Ancho de columnas (Sacado del env)
                 
             # Encabezados
             headers = cfg["column_header_name"] #Tomo los nombres de los encabezados del env
