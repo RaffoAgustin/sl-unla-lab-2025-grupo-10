@@ -46,7 +46,7 @@ def actualizar_turnos_vencidos(db: Session):
 
     # Buscar turnos confirmados que ya pasaron
     turnos_vencidos = db.query(Turno).filter(
-        Turno.estado == ESTADOS_TURNO[2],  # "Confirmado"
+        Turno.estado == ESTADOS_TURNO.Confirmado,  # "Confirmado"
         (
             (Turno.fecha < hoy) |  # Fechas pasadas
             (
@@ -59,7 +59,7 @@ def actualizar_turnos_vencidos(db: Session):
     # Actualizar a "Asistido"
     if turnos_vencidos:
         for turno in turnos_vencidos:
-            turno.estado = ESTADOS_TURNO[3]  # "Asistido"
+            turno.estado = ESTADOS_TURNO.Asistido  # "Asistido"
 
         db.commit()
         return len(turnos_vencidos)

@@ -24,7 +24,7 @@ def modificar_turno(id: int, datos_turno: TurnoUpdate, db: Session=Depends(get_d
         existe = db.query(Turno).filter(
             Turno.fecha == datos_turno.fecha,
             Turno.hora == datos_turno.hora,
-            Turno.estado != ESTADOS_TURNO[1] #Excluye a los turnos cancelados
+            Turno.estado != ESTADOS_TURNO.Cancelado #Excluye a los turnos cancelados
         ).first()
 
         if existe:

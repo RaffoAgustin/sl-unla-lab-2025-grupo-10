@@ -17,16 +17,16 @@ def cancelar_turno(id: int, db: Session = Depends(get_db)):
             raise HTTPException(
                 status_code=404, detail=f"Turno con ID {id} no encontrado")
 
-        if turno.estado == ESTADOS_TURNO[3]:
+        if turno.estado == ESTADOS_TURNO.Asistido:
             raise HTTPException(
                 status_code=400, detail=f"El turno con ID {id} ya fue asistido y no puede ser cancelado")
 
-        if turno.estado == ESTADOS_TURNO[1]:
+        if turno.estado == ESTADOS_TURNO.Cancelado:
             raise HTTPException(
                 status_code=400, detail=f"El turno con ID {id} ya fue cancelado previamente")
 
         # La cancelacion libera el turno para que otra persona lo pueda tomar
-        turno.estado = ESTADOS_TURNO[1]  # "Cancelado"
+        turno.estado = ESTADOS_TURNO.Cancelado  # "Cancelado"
         db.commit()
         db.refresh(turno)
 

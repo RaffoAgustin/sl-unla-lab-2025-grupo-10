@@ -23,11 +23,11 @@ def confirmar_turno(id: int, db: Session = Depends(get_db)):
                 status_code=400, detail=f"El turno con ID {id} no tiene una persona asignada")
 
         # Validar que el turno esté en estado "Pendiente"
-        if turno.estado != ESTADOS_TURNO[0]:  # "Pendiente"
+        if turno.estado != ESTADOS_TURNO.Pendiente:  # "Pendiente"
             raise HTTPException(
                 status_code=400, detail=f"El turno con ID {id} no puede ser confirmado. Estado actual: {turno.estado}")
 
-        turno.estado = ESTADOS_TURNO[2]  # "Confirmado"
+        turno.estado = ESTADOS_TURNO.Confirmado  # "Confirmado"
         db.commit()
         db.refresh(turno)
 

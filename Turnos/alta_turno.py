@@ -16,7 +16,7 @@ def crear_turno(datos_turno: TurnoCreate, db: Session = Depends(get_db)):
         existe = db.query(Turno).filter(
             Turno.fecha == datos_turno.fecha,
             Turno.hora == datos_turno.hora,
-            Turno.estado != ESTADOS_TURNO[1] #Excluye a los turnos cancelados
+            Turno.estado != ESTADOS_TURNO.Cancelado #Excluye a los turnos cancelados
         ).first()
 
         if existe:

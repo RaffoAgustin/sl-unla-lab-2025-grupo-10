@@ -38,7 +38,7 @@ def turnos_confirmados_periodo(
         turnosConfirmados = (
             db.query(Turno)
             .filter(
-                Turno.estado == ESTADOS_TURNO[2], #Aquellos turnos confirmados
+                Turno.estado == ESTADOS_TURNO.Confirmado, #Aquellos turnos confirmados
                 Turno.fecha >= fecha_desde) #Donde su fecha sea mas reciente que "desde"
                 )
         
