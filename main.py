@@ -7,8 +7,8 @@ from Personas.listado_personas import router as listado_persona_router
 from Personas.obtener_persona import router as persona_router
 from Personas.eliminar_persona import router as eliminar_router
 from Personas.modificar_persona import router as modificar_router
-from Personas.personas_con_x_turnos_cancelados import router as personas_con_x_turnos_cancelados
-from Personas.estado_Personas_Habilitadas import router as estado_personas_habilitadas
+from Reportes.personas_con_x_turnos_cancelados import router as personas_con_x_turnos_cancelados
+from Reportes.estado_Personas_Habilitadas import router as estado_personas_habilitadas
 
 
 from Turnos.alta_turno import router as turnos_router
@@ -16,27 +16,27 @@ from Turnos.eliminar_turno import router as eliminar_turno_router
 from Turnos.modificar_turno import router as modificar_turno
 from Turnos.listado_turnos import router as listado_turnos
 from Turnos.obtener_turno_particular import router as obtener_turno_particular
-from Turnos.calculo_turnos_disponibles import router as calculo_turnos_disponibles
-from Turnos.turnos_de_una_fecha import router as turnos_de_una_fecha
-from Turnos.turnos_de_una_persona import router as turnos_de_una_persona
-from Turnos.turnos_confirmados_periodo import router as turnos_confirmados_periodo
+from Reportes.calculo_turnos_disponibles import router as calculo_turnos_disponibles
+from Reportes.turnos_de_una_fecha import router as turnos_de_una_fecha
+from Reportes.turnos_de_una_persona import router as turnos_de_una_persona
+from Reportes.turnos_confirmados_periodo import router as turnos_confirmados_periodo
 from Turnos.confirmar_turno import router as confirmar_turno
 from Turnos.cancelar_turno import router as cancelar_turno
-from Turnos.turnos_Cancelados_Mes_Actual import router as turnosCanceladosPorMes
+from Reportes.turnos_Cancelados_Mes_Actual import router as turnosCanceladosPorMes
 
-from Reportes.CSV.turnos_por_persona_csv import router as turnosPorPersonaCsv
-from Reportes.CSV.turnos_por_fecha_csv import router as turnosPorFechaCsv
-from Reportes.CSV.turnos_Cancelados_Mes_Actual_csv import router as turnosCanceladosMesActualCsv
-from Reportes.CSV.estado_Personas_Habilitadas_csv import router as estadoPersonasHabilitadasCsv
-from Reportes.CSV.turnos_confirmados_periodo_csv import router as turnosConfirmadosPeriodoCsv
-from Reportes.CSV.personas_con_x_turnos_cancelados_csv import router as personasConXTurnosCanceladosCsv
+from Reportes.CSV.CSV_turnos_por_persona import router as turnosPorPersonaCsv
+from Reportes.CSV.CSV_turnos_por_fecha import router as turnosPorFechaCsv
+from Reportes.CSV.CSV_turnos_Cancelados_Mes_Actual import router as turnosCanceladosMesActualCsv
+from Reportes.CSV.CSV_estado_Personas_Habilitadas import router as estadoPersonasHabilitadasCsv
+from Reportes.CSV.CSV_turnos_confirmados_periodo import router as turnosConfirmadosPeriodoCsv
+from Reportes.CSV.CSV_personas_con_x_turnos_cancelados import router as personasConXTurnosCanceladosCsv
 
-from Reportes.PDF.turnos_Cancelados_Mes_Actual_pdf import router as turnosCanceladosMesActualPdf
-from Reportes.PDF.estado_Personas_Habilitadas_pdf import router as estadoPersonasHabilitadasPdf
-from Reportes.PDF.turnos_por_fecha_pdf import router as turnosPorFechaPdf
-from Reportes.PDF.turnos_por_persona_pdf import router as turnosPorPersonaPdf
-from Reportes.PDF.turnos_confirmados_periodo_pdf import router as turnosConfirmadosPeriodoPdf
-from Reportes.PDF.personas_con_x_turnos_cancelados_pdf import router as personasConXTurnosCanceladosPdf
+from Reportes.PDF.PDF_turnos_Cancelados_Mes_Actual import router as turnosCanceladosMesActualPdf
+from Reportes.PDF.PDF_estado_Personas_Habilitadas import router as estadoPersonasHabilitadasPdf
+from Reportes.PDF.PDF_turnos_por_fecha import router as turnosPorFechaPdf
+from Reportes.PDF.PDF_turnos_por_persona import router as turnosPorPersonaPdf
+from Reportes.PDF.PDF_turnos_confirmados_periodo import router as turnosConfirmadosPeriodoPdf
+from Reportes.PDF.PDF_personas_con_x_turnos_cancelados import router as personasConXTurnosCanceladosPdf
 
 
 app = FastAPI(title="Mi API")
