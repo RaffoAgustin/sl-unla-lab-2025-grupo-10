@@ -7,8 +7,8 @@ from Personas.listado_personas import router as listado_persona_router
 from Personas.obtener_persona import router as persona_router
 from Personas.eliminar_persona import router as eliminar_router
 from Personas.modificar_persona import router as modificar_router
-from Personas.personas_con_x_turnos_cancelados import router as personas_con_x_turnos_cancelados
-from Personas.estado_Personas_Habilitadas import router as estado_personas_habilitadas
+from Reportes.personas_con_x_turnos_cancelados import router as personas_con_x_turnos_cancelados
+from Reportes.estado_Personas_Habilitadas import router as estado_personas_habilitadas
 
 
 from Turnos.alta_turno import router as turnos_router
@@ -16,13 +16,13 @@ from Turnos.eliminar_turno import router as eliminar_turno_router
 from Turnos.modificar_turno import router as modificar_turno
 from Turnos.listado_turnos import router as listado_turnos
 from Turnos.obtener_turno_particular import router as obtener_turno_particular
-from Turnos.calculo_turnos_disponibles import router as calculo_turnos_disponibles
-from Turnos.turnos_de_una_fecha import router as turnos_de_una_fecha
-from Turnos.turnos_de_una_persona import router as turnos_de_una_persona
-from Turnos.turnos_confirmados_periodo import router as turnos_confirmados_periodo
+from Reportes.calculo_turnos_disponibles import router as calculo_turnos_disponibles
+from Reportes.turnos_de_una_fecha import router as turnos_de_una_fecha
+from Reportes.turnos_de_una_persona import router as turnos_de_una_persona
+from Reportes.turnos_confirmados_periodo import router as turnos_confirmados_periodo
 from Turnos.confirmar_turno import router as confirmar_turno
 from Turnos.cancelar_turno import router as cancelar_turno
-from Turnos.turnos_Cancelados_Mes_Actual import router as turnosCanceladosPorMes
+from Reportes.turnos_Cancelados_Mes_Actual import router as turnosCanceladosPorMes
 
 from Reportes.CSV.turnos_por_persona_csv import router as turnosPorPersonaCsv
 from Reportes.CSV.turnos_por_fecha_csv import router as turnosPorFechaCsv
