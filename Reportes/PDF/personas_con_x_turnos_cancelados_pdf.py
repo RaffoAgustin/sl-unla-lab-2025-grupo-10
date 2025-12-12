@@ -50,7 +50,6 @@ def exportar_personas_con_turnos_cancelados_pdf(
         
         #Bucle de páginas
         for num_pagina in range(total_paginas):
-            print(num_pagina)
             
             page = Page(width=cfg["page_width"], height=cfg["page_height"])
             doc.add_page(page)
