@@ -24,19 +24,19 @@ from Turnos.confirmar_turno import router as confirmar_turno
 from Turnos.cancelar_turno import router as cancelar_turno
 from Reportes.turnos_Cancelados_Mes_Actual import router as turnosCanceladosPorMes
 
-from Reportes.CSV.turnos_por_persona_csv import router as turnosPorPersonaCsv
-from Reportes.CSV.turnos_por_fecha_csv import router as turnosPorFechaCsv
-from Reportes.CSV.turnos_Cancelados_Mes_Actual_csv import router as turnosCanceladosMesActualCsv
-from Reportes.CSV.estado_Personas_Habilitadas_csv import router as estadoPersonasHabilitadasCsv
-from Reportes.CSV.turnos_confirmados_periodo_csv import router as turnosConfirmadosPeriodoCsv
-from Reportes.CSV.personas_con_x_turnos_cancelados_csv import router as personasConXTurnosCanceladosCsv
+from Reportes.CSV.CSV_turnos_por_persona import router as turnosPorPersonaCsv
+from Reportes.CSV.CSV_turnos_por_fecha import router as turnosPorFechaCsv
+from Reportes.CSV.CSV_turnos_Cancelados_Mes_Actual import router as turnosCanceladosMesActualCsv
+from Reportes.CSV.CSV_estado_Personas_Habilitadas import router as estadoPersonasHabilitadasCsv
+from Reportes.CSV.CSV_turnos_confirmados_periodo import router as turnosConfirmadosPeriodoCsv
+from Reportes.CSV.CSV_personas_con_x_turnos_cancelados import router as personasConXTurnosCanceladosCsv
 
-from Reportes.PDF.turnos_Cancelados_Mes_Actual_pdf import router as turnosCanceladosMesActualPdf
-from Reportes.PDF.estado_Personas_Habilitadas_pdf import router as estadoPersonasHabilitadasPdf
-from Reportes.PDF.turnos_por_fecha_pdf import router as turnosPorFechaPdf
-from Reportes.PDF.turnos_por_persona_pdf import router as turnosPorPersonaPdf
-from Reportes.PDF.turnos_confirmados_periodo_pdf import router as turnosConfirmadosPeriodoPdf
-from Reportes.PDF.personas_con_x_turnos_cancelados_pdf import router as personasConXTurnosCanceladosPdf
+from Reportes.PDF.PDF_turnos_Cancelados_Mes_Actual import router as turnosCanceladosMesActualPdf
+from Reportes.PDF.PDF_estado_Personas_Habilitadas import router as estadoPersonasHabilitadasPdf
+from Reportes.PDF.PDF_turnos_por_fecha import router as turnosPorFechaPdf
+from Reportes.PDF.PDF_turnos_por_persona import router as turnosPorPersonaPdf
+from Reportes.PDF.PDF_turnos_confirmados_periodo import router as turnosConfirmadosPeriodoPdf
+from Reportes.PDF.PDF_personas_con_x_turnos_cancelados import router as personasConXTurnosCanceladosPdf
 
 
 app = FastAPI(title="Mi API")
