@@ -29,6 +29,9 @@ def crear_turno(datos_turno: TurnoCreate, db: Session = Depends(get_db)):
         if not persona:
             raise HTTPException(status_code=400, detail="La persona indicada no existe")
         
+        if not persona.esta_habilitado: #No es lo mismo que lo de abajo, Si el periodo de 6* meses pasó, el de abajo no lanzaría la excepción.
+            raise HTTPException(status_code=400, detail="La persona indicada no está habilitada")
+        
         if supera_max_cancelaciones(db, datos_turno.persona_id):
             raise HTTPException(
             status_code=400,
