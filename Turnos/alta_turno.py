@@ -32,7 +32,7 @@ def crear_turno(datos_turno: TurnoCreate, db: Session = Depends(get_db)):
         if not persona.esta_habilitado:
             motivo = "La persona no está habilitada para sacar turnos"
             if supera_max_cancelaciones(db, persona.id):
-                motivo += f" por exceso de cancelaciones en los últimos {MAX_MESES_CANCELADOS} meses"
+                motivo += f" por tener {MAX_CANCELADOS} o más cancelaciones en los últimos {MAX_MESES_CANCELADOS} meses"
 
             raise HTTPException(status_code=400, detail=motivo)
 
