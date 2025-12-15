@@ -2,7 +2,7 @@ from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from dateutil.relativedelta import relativedelta
 from datetime import datetime, date, timedelta
-from Utils.config import MAX_CANCELADOS, ESTADOS_TURNO
+from Utils.config import MAX_CANCELADOS, ESTADOS_TURNO, MAX_MESES_CANCELADOS, ESTADOS_TURNO
 import re
 
 def calcular_edad(fecha):
@@ -19,30 +19,20 @@ def calcular_edad(fecha):
     return relativedelta(date.today(), fecha).years
 
 
-def validar_cancelaciones(db: Session, persona_id: int, meses: int = 6):
+def supera_max_cancelaciones(db: Session, persona_id: int, meses: int = MAX_MESES_CANCELADOS):
     from DataBase.models import Turno, Persona
 
     cancelados = db.query(Turno).filter(
         Turno.persona_id == persona_id,
-        Turno.estado == "Cancelado",
+        Turno.estado == ESTADOS_TURNO.Cancelado,
         Turno.fecha >= date.today() - timedelta(days=30 * meses)
     ).count()
 
     if cancelados >= MAX_CANCELADOS:
-        persona = db.query(Persona).filter(Persona.id == persona_id).first()
+        return True
+    else:
+        return False
 
-        if persona:
-            persona.esta_habilitado = False
-            db.commit()     
-            db.refresh(persona)
-
-        raise HTTPException(
-            status_code=400,
-            detail=(
-                f"No se puede asignar el turno: la persona tiene "
-                f"{MAX_CANCELADOS} o más turnos cancelados en los últimos {meses} meses"
-       )
-)
 
 
 def actualizar_turnos_vencidos(db: Session):
