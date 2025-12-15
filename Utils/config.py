@@ -50,6 +50,10 @@ MESES = meses_str.split(',') if meses_str else []
 max_cancelados_str = os.getenv("MAX_CANCELADOS")
 MAX_CANCELADOS = int(max_cancelados_str) if max_cancelados_str else 5
 
+# Leer la variable MAX_MESES_CANCELADOS
+max_meses_str = os.getenv("MAX_MESES_CANCELADOS")
+MAX_MESES_CANCELADOS = int(max_meses_str) if max_meses_str else 6
+
 # Leer la variable CANT_ELEMENTOS_X_PAGINA
 cant_elementos_x_pagina_str = os.getenv("CANT_ELEMENTOS_X_PAGINA")
 CANT_ELEMENTOS_X_PAGINA = int(cant_elementos_x_pagina_str) if cant_elementos_x_pagina_str else 5
