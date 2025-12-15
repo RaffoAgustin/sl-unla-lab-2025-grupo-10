@@ -20,18 +20,29 @@ def calcular_edad(fecha):
 
 
 def validar_cancelaciones(db: Session, persona_id: int, meses: int = 6):
-    # Import local para romper la circularidad
-    from DataBase.models import Turno
+    from DataBase.models import Turno, Persona
 
-    if db.query(Turno).filter(
+    cancelados = db.query(Turno).filter(
         Turno.persona_id == persona_id,
-        Turno.estado == "cancelado",
-        Turno.fecha >= date.today() - timedelta(days=30*meses)
-    ).count() >= MAX_CANCELADOS:
+        Turno.estado == "Cancelado",
+        Turno.fecha >= date.today() - timedelta(days=30 * meses)
+    ).count()
+
+    if cancelados >= MAX_CANCELADOS:
+        persona = db.query(Persona).filter(Persona.id == persona_id).first()
+
+        if persona:
+            persona.esta_habilitado = False
+            db.commit()     
+            db.refresh(persona)
+
         raise HTTPException(
             status_code=400,
-            detail=f"No se puede asignar el turno: la persona tiene {MAX_CANCELADOS} o más turnos cancelados en los últimos {meses} meses"
-        )
+            detail=(
+                f"No se puede asignar el turno: la persona tiene "
+                f"{MAX_CANCELADOS} o más turnos cancelados en los últimos {meses} meses"
+       )
+)
 
 
 def actualizar_turnos_vencidos(db: Session):
