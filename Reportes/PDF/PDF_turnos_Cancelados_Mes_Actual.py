@@ -46,7 +46,7 @@ def exportar_turnos_cancelados_mes_actual_pdf(db: Session = Depends(get_db)):
             doc.add_page(page)
             layout = SingleColumnLayout(page)
             
-            # Título
+            # Título (Solo en primera página)
             if num_pagina == 0:
                 layout.add(
                     Paragraph(
@@ -59,8 +59,8 @@ def exportar_turnos_cancelados_mes_actual_pdf(db: Session = Depends(get_db)):
 
             #Calibra la variable "Turnos_pagina_actual" para que tenga un valor de inicio y fin, cambiando en cada iteración del bucle
             inicio = num_pagina * max_turnos_por_pagina
-            fin = min(inicio + max_turnos_por_pagina, len(turnos)) #Elige entre limite de pagina o el total de personas
-            turnos_pagina_actual = turnos[inicio:fin]
+            fin = min(inicio + max_turnos_por_pagina, len(turnos))  #Elige el menor entre limite de pagina o el total de turnos
+            turnos_pagina_actual = turnos[inicio:fin] #Toma solo los elementos desde el inicio hasta el fin
 
             
             # Tabla
@@ -71,7 +71,7 @@ def exportar_turnos_cancelados_mes_actual_pdf(db: Session = Depends(get_db)):
                 
             # Encabezados
             headers = cfg["column_header_name"] #Tomo los nombres de los encabezados del env
-            for h in headers:
+            for h in headers: 
                 tabla.add(Paragraph(h, font="Helvetica-Bold", horizontal_alignment=Alignment.CENTERED))
     
             # Filas

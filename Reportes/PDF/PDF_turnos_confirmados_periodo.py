@@ -79,7 +79,7 @@ def exportar_turnos_confirmados_periodo_pdf(
         doc = Document()
 
         # Cálculo inicial de cantidad de páginas
-        max_turnos_por_pagina = cfg["max_rows"] - 2
+        max_turnos_por_pagina = cfg["max_rows"] - 2 #Resto 2 por los dos subtitulos
         total_paginas = (len(paginaDeTurnos) + max_turnos_por_pagina - 1) // max_turnos_por_pagina #Division entera, no puede ser decimal
    
         #Bucle de páginas
@@ -113,12 +113,13 @@ def exportar_turnos_confirmados_periodo_pdf(
         
             #Calibra la variable "Turnos_pagina_actual" para que tenga un valor de inicio y fin, cambiando en cada iteración del bucle
             inicio = num_pagina * max_turnos_por_pagina
-            fin = min(inicio + max_turnos_por_pagina, len(paginaDeTurnos)) #Elige entre limite de pagina o el total de personas
-            turnos_pagina_actual = paginaDeTurnos[inicio:fin]
+            fin = min(inicio + max_turnos_por_pagina, len(paginaDeTurnos)) #Elige el menor entre limite de pagina o el total de la página de turnos
+            turnos_pagina_actual = paginaDeTurnos[inicio:fin] #Toma solo los elementos desde el inicio hasta el fin
 
             #Excluyo a Estado de la tabla, ya que es muy redundante
-            idx_personaid = cfg["column_header_name"].index("Estado")
-            column_widths_filtrados = [w for i, w in enumerate(cfg["column_widths"]) if i != idx_personaid]
+            idx_personaid = cfg["column_header_name"].index("Estado") #Tomo el índice donde el Column_header_name es "Estado"
+            column_widths_filtrados = [w for i, w in enumerate(cfg["column_widths"]) if i != idx_personaid] #Por cada ancho de columna, toma el valor de todos salvo el que tenga el índice excluido 
+                                                    #    ^  enumerate asocia un índice al vector, aunque tenga el mismo valor
 
             # Tabla
             tabla = Table(
@@ -144,6 +145,7 @@ def exportar_turnos_confirmados_periodo_pdf(
                   #  t.estado if t.estado else "—"
                 ]
 
+                #Columnas de datos
                 for dato in datos:
                     tabla.add(Paragraph(
                         dato, 

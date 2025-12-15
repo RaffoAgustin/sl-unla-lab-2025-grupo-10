@@ -63,13 +63,13 @@ def exportar_turnos_por_persona_csv(
         
             #Calibra la variable "Turnos_pagina_actual" para que tenga un valor de inicio y fin, cambiando en cada iteración del bucle
             inicio = num_pagina * max_turnos_por_pagina
-            fin = min(inicio + max_turnos_por_pagina, len(turnos)) #Elige entre limite de pagina o el total de personas
-            turnos_pagina_actual = turnos[inicio:fin]
+            fin = min(inicio + max_turnos_por_pagina, len(turnos))  #Elige el menor entre limite de pagina o el total de turnos
+            turnos_pagina_actual = turnos[inicio:fin] #Toma solo los elementos desde el inicio hasta el fin
         
             #Excluyo a persona_ID de la tabla, ya que es muy redundante
-            idx_personaid = cfg["column_header_name"].index("Persona_ID")
-            column_widths_filtrados = [w for i, w in enumerate(cfg["column_widths"]) if i != idx_personaid]
-
+            idx_personaid = cfg["column_header_name"].index("Persona_ID") #Tomo el índice donde el Column_header_name es "Persona_ID"
+            column_widths_filtrados = [w for i, w in enumerate(cfg["column_widths"]) if i != idx_personaid] #Por cada ancho de columna, toma el valor de todos salvo el que tenga el índice excluido 
+                                                    #    ^  enumerate asocia un índice al vector, aunque tenga el mismo valor
             # Tabla
             tabla = Table(
                 number_of_rows=len(turnos_pagina_actual) + 1, #Numero de filas

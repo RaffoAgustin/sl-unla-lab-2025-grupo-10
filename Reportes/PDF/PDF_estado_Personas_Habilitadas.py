@@ -57,8 +57,8 @@ def exportar_estado_personas_pdf(
 
                 #Calibra la variable "Personas_pagina_actual" para que tenga un valor de inicio y fin, cambiando en cada iteración del bucle
                 inicio = num_pagina * max_personas_por_pagina
-                fin = min(inicio + max_personas_por_pagina, len(personas)) #Elige entre limite de pagina o el total de personas
-                personas_pagina_actual = personas[inicio:fin]
+                fin = min(inicio + max_personas_por_pagina, len(personas)) #Elige el menor entre limite de pagina o el total de personas
+                personas_pagina_actual = personas[inicio:fin] #Toma solo los elementos desde el inicio hasta el fin
 
                 # Tabla
                 tabla = Table(

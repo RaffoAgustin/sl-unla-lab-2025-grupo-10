@@ -54,8 +54,8 @@ def exportar_turnos_de_una_fecha_csv(fecha: str, db: Session = Depends(get_db)):
         
             #Calibra la variable "Turnos_pagina_actual" para que tenga un valor de inicio y fin, cambiando en cada iteración del bucle
             inicio = num_pagina * max_turnos_por_pagina
-            fin = min(inicio + max_turnos_por_pagina, len(turnos)) #Elige entre limite de pagina o el total de personas
-            turnos_pagina_actual = turnos[inicio:fin]
+            fin = min(inicio + max_turnos_por_pagina, len(turnos)) #Elige entre limite de pagina o el total de turnos
+            turnos_pagina_actual = turnos[inicio:fin] #Toma solo los elementos desde el inicio hasta el fin
 
             # Tabla
             tabla = Table(
