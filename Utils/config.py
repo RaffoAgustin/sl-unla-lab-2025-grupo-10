@@ -56,14 +56,12 @@ CANT_ELEMENTOS_X_PAGINA = int(cant_elementos_x_pagina_str) if cant_elementos_x_p
 
 #Leer variables de configuración de PDF
 
-load_dotenv()  # carga el .env automáticamente
+def formatear_pdf_config(nombre_config_env: str):
+    raw = os.getenv(nombre_config_env) #Busca la variable de entorno con el nombre indicado
+    if not raw: #Si no encuentra, lanza excepción
+        raise ValueError(f"Variable de entorno {nombre_config_env} no encontrada")
 
-def load_pdf_config(env_name: str):
-    raw = os.getenv(env_name)
-    if not raw:
-        raise ValueError(f"Variable de entorno {env_name} no encontrada")
-
-    config = json.loads(raw)
+    config = json.loads(raw) #Convierte la variable de entorno a formato json
 
     # Convertir campos necesarios a Decimal
     config["page_width"] = Decimal(config["page_width"])
@@ -74,5 +72,5 @@ def load_pdf_config(env_name: str):
     return config
 
 # Creamos accesores simples:
-CONFIG_PDF_PERSONA = load_pdf_config("CONFIG_PDF_PERSONA")
-CONFIG_PDF_TURNOS = load_pdf_config("CONFIG_PDF_TURNOS")
+CONFIG_PDF_PERSONA = formatear_pdf_config("CONFIG_PDF_PERSONA")
+CONFIG_PDF_TURNOS = formatear_pdf_config("CONFIG_PDF_TURNOS")
