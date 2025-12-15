@@ -3,9 +3,9 @@ from sqlalchemy.orm import Session
 from DataBase.database import get_db
 from DataBase.models import Turno, Persona
 from schemas import TurnoCreate
-from Utils.utils import validar_cancelaciones
+from Utils.utils import supera_max_cancelaciones
 from Utils.config import HORARIOS_VALIDOS
-from Utils.config import ESTADOS_TURNO
+from Utils.config import ESTADOS_TURNO, MAX_CANCELADOS, MAX_MESES_CANCELADOS
 
 router = APIRouter()
 
@@ -29,7 +29,13 @@ def crear_turno(datos_turno: TurnoCreate, db: Session = Depends(get_db)):
         if not persona:
             raise HTTPException(status_code=400, detail="La persona indicada no existe")
         
-        validar_cancelaciones(db, datos_turno.persona_id)
+        if supera_max_cancelaciones(db, datos_turno.persona_id):
+            raise HTTPException(
+            status_code=400,
+            detail=(
+                f"No se puede asignar el turno: la persona tiene "
+                f"{MAX_CANCELADOS} o más turnos cancelados en los últimos {MAX_MESES_CANCELADOS} meses"
+       ))
 
         turno_nuevo = Turno(
             fecha=datos_turno.fecha,

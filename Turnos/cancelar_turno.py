@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from DataBase.models import Turno, Persona
 from DataBase.database import get_db
 from Utils.config import ESTADOS_TURNO
+from Utils.utils import supera_max_cancelaciones
 
 router = APIRouter()
 
@@ -29,6 +30,13 @@ def cancelar_turno(id: int, db: Session = Depends(get_db)):
         turno.estado = ESTADOS_TURNO.Cancelado  # "Cancelado"
         db.commit()
         db.refresh(turno)
+
+        if supera_max_cancelaciones(db, turno.persona_id):
+            persona = db.get(Persona, turno.persona_id)
+            if persona:
+                persona.esta_habilitado = False
+                db.commit()
+                db.refresh(persona)
 
         return {
             "Turno cancelado exitosamente": {
